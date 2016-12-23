@@ -1,0 +1,16 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="./get-all.html">
+
+<dom-module id="iterate-data">
+  <template>
+    <get-all db="{{db}}" on-data="_handleData"></get-all>
+  </template>
+  <script>
+    Polymer({
+      is:'iterate-data',
+      _handleData: function(e) {
+        console.log(e);
+      }
+    });
+  </script>
+</dom-module>

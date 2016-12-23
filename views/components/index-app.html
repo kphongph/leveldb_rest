@@ -1,0 +1,63 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="get-all.html">
+
+<dom-module id="index-app">
+  <template>
+    <paper-input label="Database" value="{{db}}"></paper-input>
+    <paper-input label="Indexing name" value="{{indexName}}"></paper-input>
+    <paper-input label="Attribute Order List (separate with '.')" 
+       value="{{attributeList}}"></paper-input>
+    <paper-button on-click="_start">Start</paper-button>
+    <div>
+      Total Records <span>{{total}}</span>
+    </div>
+
+    <get-all id="getAll" db="{{db}}" 
+       total-records="{{total}}" on-data="_handleData">
+    </get-all>
+
+    <iron-ajax
+      id="createDb"
+      method="PUT"
+      content-type="application/json"
+      body='{}'
+      params='{"apikey":"test12345"}'
+      on-response="_handleCreate">
+    </iron-ajax>
+
+    <iron-ajax
+      id="post"
+      method="POST"
+      params='{"apikey":"test12345"}'
+      on-response="_handlePosted">
+    </iron-ajax>
+    
+  </template>
+  <script>
+    Polymer({
+      is:'index-app',
+      properties : {
+      },
+      _start: function() {
+        if(this.db) {
+          this.$.createDb.url="/api/dbs/"+this.db+"_index";
+          this.$.createDb.generateRequest();
+        }
+      },
+      _handleCreate: function(e) {
+        var response = e.detail.response;
+        if(response.ok) {
+          this.$.getAll.start();
+        }
+      },
+      _handleData: function(e) {
+        var data = e.detail;
+        this.$.post.url="/api/dbs/"+this.db+"_index";
+      }
+    });
+  </script>
+</dom-module>

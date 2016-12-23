@@ -1,0 +1,47 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="get-all">
+  <template>
+   <iron-ajax 
+     id="getAjax"
+     params='{"apikey":"test12345","limit":2}'
+     handle-as="json"
+     on-response="_handle">
+   </iron-ajax>
+  </template>
+  <script>
+    Polymer({
+      is:'get-all',
+      properties : {
+        db:String,
+        totalRecords:{
+          type:Number,
+          notify:true
+        }
+      },
+      start: function() {
+        if(this.db) {
+          this.totalRecords=0;
+          this.$.getAjax.url = '/api/dbs/'+this.db;
+          this.$.getAjax.generateRequest();
+        }
+      },
+      _handle: function(e) {
+        var result = e.detail.response;
+        var this_obj = this;
+        this.totalRecords+=result.length;
+        if(result.length > 0) {
+          result.forEach(function(data) {
+            this_obj.fire('data',data);
+          });
+          var key = result[result.length-1].key;
+          this.$.getAjax.params['start']=key+'\FF';
+          this.$.getAjax.generateRequest();
+        } else {
+          delete this.$.getAjax.params['start'];
+        }
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,23 @@
+{
+  "name": "leveldb_rest",
+  "description": "",
+  "main": "app.js",
+  "authors": [
+    "Phongphun Kijsanayothin"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/kphongph/leveldb_rest",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "^1.7.1",
+    "iron-ajax": "^1.4.3",
+    "paper-button": "PolymerElements/paper-button#^1.0.14",
+    "paper-input": "PolymerElements/paper-input#^1.1.22"
+  }
+}

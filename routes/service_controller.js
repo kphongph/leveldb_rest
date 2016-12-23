@@ -29,7 +29,10 @@ module.exports = {
           if(req.query.lt) opt['lt'] = req.query.lt
           if(req.query.gte) opt['gte'] = req.query.gte
           if(req.query.lte) opt['lte'] = req.query.lte
-          if(req.query.limit) opt['limit'] = req.query.limit
+          if(req.query.limit) {
+            var limit = parseInt(req.query.limit);
+            opt['limit'] = limit?limit:50;
+          }
 
           db.createReadStream(opt)
             .pipe(JSONStream.stringify())
