@@ -1,0 +1,20 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+
+<dom-module id="document-item">
+  <template>
+    <div>
+      <div><b>{{key}}</b></div>
+      <div>{{value}}</div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is:'document-item',
+      properties : {
+        key:String,
+        value:String
+      }
+    });
+  </script>
+</dom-module>

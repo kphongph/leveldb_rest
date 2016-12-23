@@ -60,10 +60,15 @@ module.exports = {
     var _key = _key.replace(/-/g,'');
     var _value = req.body;
     delete _value.apikey;
-
-    util.put(db_name,_key,_value,function(result) {
-      res.json(result);
-    });
+    if(_value['.id']) {
+      util.put(db_name,_key,_value['.id'],function(result) {
+        res.json(result);
+      });
+    } else {
+      util.put(db_name,_key,_value,function(result) {
+        res.json(result);
+      });
+    }
   },
 
   _daletedata: function(req, res) {

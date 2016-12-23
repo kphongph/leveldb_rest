@@ -9,7 +9,7 @@
   <template>
     <paper-input label="Database" value="{{db}}"></paper-input>
     <paper-input label="Indexing name" value="{{indexName}}"></paper-input>
-    <paper-input label="Attribute Order List (separate with '.')" 
+    <paper-input label="Attribute Order List (separate with '.' comma)" 
        value="{{attributeList}}"></paper-input>
     <paper-button on-click="_start">Start</paper-button>
     <div>
@@ -32,6 +32,7 @@
     <iron-ajax
       id="post"
       method="POST"
+      content-type="application/json"
       params='{"apikey":"test12345"}'
       on-response="_handlePosted">
     </iron-ajax>
@@ -40,7 +41,7 @@
   <script>
     Polymer({
       is:'index-app',
-      properties : {
+      properties :{
       },
       _start: function() {
         if(this.db) {
@@ -51,12 +52,26 @@
       _handleCreate: function(e) {
         var response = e.detail.response;
         if(response.ok) {
-          this.$.getAll.start();
+          if(this.attributeList && this.indexName) {
+            this.key_list = this.attributeList.split(',');
+            this.$.getAll.start();
+          }
         }
       },
       _handleData: function(e) {
         var data = e.detail;
-        this.$.post.url="/api/dbs/"+this.db+"_index";
+        var key_list = this.key_list;
+        var index_key = this.indexName+':';
+        key_list.forEach(function(key) {
+          index_key+=key+':'+data.value[key]+':';
+        });
+        index_key+=data.key;
+        this.$.post.url="/api/dbs/"+this.db+"_index/"+index_key;
+        this.$.post.body = {'.id':data.key};
+        this.$.post.generateRequest();
+      },
+      _handlePosted:function(e) {
+        console.log(e);
       }
     });
   </script>

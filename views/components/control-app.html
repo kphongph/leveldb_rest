@@ -1,0 +1,51 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="document-item.html">
+
+<dom-module id="control-app">
+  <template>
+    <paper-input label="Database" value="{{db}}"></paper-input>
+    <paper-input label="Start Key" value="{{startKey}}"></paper-input>
+    <paper-button on-click="_start">Load</paper-button>
+
+    <iron-ajax
+      id="getAjax"
+      params='{"apikey":"test12345"}'
+      on-response="_handle">
+    </iron-ajax>
+
+    <div id="content">
+    </div>
+    
+  </template>
+  <script>
+    Polymer({
+      is:'control-app',
+      properties :{
+      },
+      _start: function() {
+        this.$.getAjax.url = '/api/dbs/'+this.db;
+        this.$.getAjax.params['gte'] = this.startKey;
+        this.$.getAjax.params['lt'] = this.startKey+'\u00ff';
+        this.$.getAjax.generateRequest();
+        var node = this.$.content;
+        while(node.firstChild) {
+          node.removeChild(node.firstChild);
+        }
+      },
+      _handle: function(e) {
+        var response = e.detail.response;
+        var thisObj = this;
+        response.forEach(function(data) { 
+          var ele=document.createElement('document-item');
+          ele.setAttribute('key', data.key);
+          ele.setAttribute('value',JSON.stringify(data.value));
+          thisObj.$.content.appendChild(ele);
+        });
+      }
+    });
+  </script>
+</dom-module>
