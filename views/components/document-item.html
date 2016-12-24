@@ -1,11 +1,21 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <dom-module id="document-item">
   <template>
-    <div>
+    <style is="custom-style"
+      include="iron-flex iron-flex-alignment iron-flex-factors">
+      :host {
+        display:block;
+      }
+      .text {
+        word-wrap:break-word;
+      }
+    </style>
+    <div class="layout vertical">
       <div><b>{{key}}</b></div>
-      <div>{{value}}</div>
+      <div class="flex"><pre>{{_format(value)}}</pre></div>  
+     </div>
     </div>
   </template>
   <script>
@@ -14,6 +24,18 @@
       properties : {
         key:String,
         value:String
+      },
+      _format : function(str) {
+        var obj = JSON.parse(str);
+        var rstr = '';
+        if((typeof obj) === "object") {
+          for(var key in obj) {
+            rstr += key+':'+obj[key]+'\n';
+          }
+          return rstr;
+        } else {
+          return str;
+        }
       }
     });
   </script>

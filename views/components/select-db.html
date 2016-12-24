@@ -24,8 +24,10 @@
       last-response="{{lResponse}}">
     </iron-ajax>
     
-    <paper-dropdown-menu label="Database" value="{{db}}">
-      <paper-listbox class="dropdown-content" selected-attribute="id">
+    <paper-dropdown-menu id="dropdown" label="Database" value="{{db}}">
+      <paper-listbox 
+        class="dropdown-content"
+        selected-attribute="id">
         <template is="dom-repeat" items="{{lResponse.dbs}}"> 
           <paper-item id="{{item}}">{{item}}</paper-item>
         </template>
@@ -43,6 +45,9 @@
         }
       },
       query:function() {
+        console.log('query');
+        this.$.dropdown._setSelectedItem(null);
+        this.$.dropdown._setSelectedItem();
         this.$.ajax.generateRequest();
       }
     });

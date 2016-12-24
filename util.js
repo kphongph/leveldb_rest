@@ -12,6 +12,10 @@ var get_dbs = function(name,options,cb) {
 
   if(!dbs[name]) {
     console.log('create ',name);
+    var re = /_index$/;
+    if(re.test(name)) {
+      options['valueEncoding']='utf8';
+    }
     levelup(config.db_path+'/'+name,options,function(err, db) {
       if (err) {
         cb(err, null);
@@ -80,13 +84,14 @@ var del = function(name,key,cb) {
 var deldb = function(name,cb) {
   var path = config.db_path+'/'+name;
   if(!dbs[name]) {
-    cb('{"ok":true,"message":"db is not exist"}');
+    cb({"ok":true,"message":"db is not exist"});
     deleteFolderRecursive(path);
   } else {
     var db = dbs[name].db;
     db.close(function() {
       deleteFolderRecursive(path);
-      cb('{"ok":true,"message":"db is destroyed"}');
+      delete dbs[name];
+      cb({'ok':true,'message':name+' is destroyed'});
     });
   }
 };

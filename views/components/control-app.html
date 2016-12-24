@@ -2,6 +2,7 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <link rel="import" href="document-item.html">
 <link rel="import" href="db-service.html">
@@ -9,20 +10,31 @@
 
 <dom-module id="control-app">
   <template>
-    <style include="shared-styles">
+    <style include="shared-styles iron-flex iron-flex-alignment iron-flex-factors" >
+      :host {
+        display:block;
+      }
+      #content {
+        background-color:#efefef;
+      }
     </style>
 
-    <h3>Query:<span>{{db}}</span></h3>
     <db-service apikey="{{apikey}}"></db-service>
-    <paper-input label="Start Key" value="{{startKey}}"></paper-input>
-    <paper-button class="indigo" on-click="_start">Load</paper-button>
     <iron-ajax
       id="getAjax"
       params$='{"apikey":"{{apikey}}"}'
       on-response="_handle">
     </iron-ajax>
 
-    <div id="content">
+    <div class="layout vertical">
+     <div>
+       <paper-input label$="Query {{db}} [Start Key]" value="{{startKey}}"></paper-input>
+       <paper-button class="indigo" on-click="_start">Query</paper-button>
+     </div>
+     <div class="flex">
+      <div id="content" class="flex">
+      </div>
+     </div>
     </div>
     
   </template>

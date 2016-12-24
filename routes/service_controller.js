@@ -33,6 +33,7 @@ module.exports = {
             var limit = parseInt(req.query.limit);
             opt['limit'] = limit?limit:50;
           }
+          console.log(opt);
 
           db.createReadStream(opt)
             .pipe(JSONStream.stringify())
