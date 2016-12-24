@@ -4,16 +4,21 @@
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 
 <link rel="import" href="document-item.html">
+<link rel="import" href="db-service.html">
+<link rel="import" href="shared-styles.html">
 
 <dom-module id="control-app">
   <template>
-    <paper-input label="Database" value="{{db}}"></paper-input>
-    <paper-input label="Start Key" value="{{startKey}}"></paper-input>
-    <paper-button on-click="_start">Load</paper-button>
+    <style include="shared-styles">
+    </style>
 
+    <h3>Query:<span>{{db}}</span></h3>
+    <db-service apikey="{{apikey}}"></db-service>
+    <paper-input label="Start Key" value="{{startKey}}"></paper-input>
+    <paper-button class="indigo" on-click="_start">Load</paper-button>
     <iron-ajax
       id="getAjax"
-      params='{"apikey":"test12345"}'
+      params$='{"apikey":"{{apikey}}"}'
       on-response="_handle">
     </iron-ajax>
 

@@ -4,14 +4,20 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 
 <link rel="import" href="get-all.html">
+<link rel="import" href="select-db.html">
+<link rel="import" href="db-service.html">
+<link rel="import" href="shared-styles.html">
 
 <dom-module id="index-app">
   <template>
-    <paper-input label="Database" value="{{db}}"></paper-input>
+    <style include="shared-styles">
+    </style>
+    <db-service apikey="{{apikey}}"></db-service>
+    <h3>Indexing <span>{{db}}</span></h3>
     <paper-input label="Indexing name" value="{{indexName}}"></paper-input>
     <paper-input label="Attribute Order List (separate with '.' comma)" 
        value="{{attributeList}}"></paper-input>
-    <paper-button on-click="_start">Start</paper-button>
+    <paper-button class="indigo" on-click="_start">Start</paper-button>
     <div>
       Total Records <span>{{total}}</span>
     </div>
@@ -25,7 +31,7 @@
       method="PUT"
       content-type="application/json"
       body='{}'
-      params='{"apikey":"test12345"}'
+      params$='{"apikey":"{{apikey}}"}'
       on-response="_handleCreate">
     </iron-ajax>
 
@@ -33,7 +39,7 @@
       id="post"
       method="POST"
       content-type="application/json"
-      params='{"apikey":"test12345"}'
+      params$='{"apikey":"{{apikey}}"}'
       on-response="_handlePosted">
     </iron-ajax>
     

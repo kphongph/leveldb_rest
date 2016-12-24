@@ -79,6 +79,13 @@ module.exports = {
       res.json(result);
     });
   },
+  _daletedb: function(req, res) {
+    var db_name = req.params.dbs;
+
+    util.deldb(db_name,function(result) {
+      res.json(result);
+    });
+  },
   _listdbs : function(req,res) {
     util.list_db(function(result) {
       res.json(result);

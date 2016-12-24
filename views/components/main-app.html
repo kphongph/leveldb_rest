@@ -1,0 +1,54 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="select-db.html">
+<link rel="import" href="db-service.html">
+<link rel="import" href="index-app.html">
+<link rel="import" href="control-app.html">
+<link rel="import" href="create-app.html">
+<link rel="import" href="drop-app.html">
+
+<dom-module id="main-app">
+  <template>
+    <style is="custom-style" 
+      include="iron-flex iron-flex-factors iron-flex-alignment">
+      :host {
+        display:block;
+      }
+    </style>
+    <div class="layout horizontal">
+      <div class="flex-1">
+        <create-app on-db-changed="_dbChanged"></create-app>
+      </div>
+      <div class="flex-4">
+        <div class="layout vertical">
+          <div>
+            <select-db id="selectDB" db="{{db}}"></select-db>
+          </div>
+          <div>
+            <index-app db="{{db}}"></index-app>
+          </div>
+          <div>
+            <control-app db="{{db}}"></control-app>
+          </div>
+          <div>
+            <drop-app db="{{db}}" on-db-changed="_dbChanged"></drop-app>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is:'main-app',
+      properties :{
+      },
+      _dbChanged:function(e) {
+        this.$.selectDB.query();
+      }
+    });
+  </script>
+</dom-module>

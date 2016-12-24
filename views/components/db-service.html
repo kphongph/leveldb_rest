@@ -1,0 +1,20 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="db-service">
+  <template>
+  </template>
+
+  <script>
+    Polymer({
+      is:'db-service',
+      properties :{
+        apikey: {
+          type:String,
+          notify:true,
+          value:'test12345'
+        }
+      }
+    });
+  </script>
+</dom-module>

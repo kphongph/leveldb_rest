@@ -1,11 +1,14 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 
+<link rel="import" href="db-service.html">
+
 <dom-module id="get-all">
   <template>
+   <db-service apikey="{{apikey}}"></db-service>
    <iron-ajax 
      id="getAjax"
-     params='{"apikey":"test12345"}'
+     params$='{"apikey":"{{apikey}}"}'
      handle-as="json"
      on-response="_handle">
    </iron-ajax>

@@ -1,0 +1,70 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="db-service.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="create-app">
+  <template>
+    <style is="custom-style"
+      include="iron-flex iron-flex-factors iron-flex-alignment shared-styles">
+      :host {
+        display:block;
+      }
+    </style>
+
+    <db-service apikey="{{apikey}}"></db-service>
+
+    <div class="layout vertical">
+      <div><h2>Create Database</h2><div>
+      <div>
+        <paper-input id="dbName" label="Database Name" value="{{db}}">
+        </paper-input>
+      </div>
+      <div>
+        <paper-dropdown-menu label="Value Encoding" value="{{encoding}}">
+          <paper-listbox class="dropdown-content" selected-attribute="id">
+            <paper-item id="json">JSON</paper-item>
+            <paper-item id="utf8">UTF8</paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+      </div>
+      <div>
+        <paper-button on-click="_start">Create</paper-button>
+      </div>
+      <div>{{response.message}}</div>
+    </div>
+
+    <iron-ajax
+      id="ajax"
+      handle-as="json"
+      content-type="application/json"
+      method="PUT"
+      params$='{"apikey":"{{apikey}}"}'
+      on-response="_handle">
+    </iron-ajax>
+
+  </template>
+  <script>
+    Polymer({
+      is:'create-app',
+      properties :{
+      },
+      _start: function() {
+        this.$.ajax.url = '/api/dbs/'+this.db;
+        this.$.ajax.body = {'valueEncoding':this.encoding};
+        this.$.ajax.generateRequest();
+      },
+      _handle:function(e) {
+        this.response = e.detail.response;
+        this.fire('db-changed',this.response);
+      }
+    });
+  </script>
+</dom-module>

@@ -11,6 +11,7 @@ var get_dbs = function(name,options,cb) {
   }
 
   if(!dbs[name]) {
+    console.log('create ',name);
     levelup(config.db_path+'/'+name,options,function(err, db) {
       if (err) {
         cb(err, null);
@@ -25,7 +26,7 @@ var get_dbs = function(name,options,cb) {
 };
 
 var create_db = function(name,options,cb) {
-  get_dbs(name,options,function(err,db) {
+  this.get_dbs(name,options,function(err,db) {
     if(err) { 
       cb({'ok':false,'message':err});
     } else {
@@ -76,9 +77,39 @@ var del = function(name,key,cb) {
   });
 };
 
+var deldb = function(name,cb) {
+  var path = config.db_path+'/'+name;
+  if(!dbs[name]) {
+    cb('{"ok":true,"message":"db is not exist"}');
+    deleteFolderRecursive(path);
+  } else {
+    var db = dbs[name].db;
+    db.close(function() {
+      deleteFolderRecursive(path);
+      cb('{"ok":true,"message":"db is destroyed"}');
+    });
+  }
+};
+
+
+var deleteFolderRecursive = function(path) {
+  if(fs.existsSync(path)) {
+    fs.readdirSync(path).forEach(function(file,index){
+      var curPath = path + "/" + file;
+      if(fs.lstatSync(curPath).isDirectory()) { // recurse
+        deleteFolderRecursive(curPath);
+      } else { // delete file
+        fs.unlinkSync(curPath);
+      }
+    });
+    fs.rmdirSync(path);
+  }
+};
+
 module.exports.get_dbs = get_dbs;
 module.exports.put = put;
 module.exports.del = del;
+module.exports.deldb = deldb;
 module.exports.create_db = create_db;
 module.exports.list_db = list_db;
 

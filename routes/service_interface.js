@@ -14,5 +14,6 @@ router.post('/dbs/:dbs/:id?', controller._putdata);
 
 //DELETE METHOD 
 router.delete('/dbs/:dbs/:id', controller._daletedata); 
+router.delete('/dbs/:dbs', controller._daletedb); 
 
 module.exports = router;

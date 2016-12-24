@@ -1,0 +1,54 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="document-item.html">
+<link rel="import" href="db-service.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="drop-app">
+  <template>
+    <style include="shared-styles">
+    </style>
+    <h3>Drop:<span>{{db}}</span></h3>
+    <db-service apikey="{{apikey}}"></db-service>
+    <paper-input id="dbName" label="Database Name" 
+      value="{{confirm}}" 
+      error-message="Mismatch"></paper-input>
+    <paper-button on-click="_start">Drop</paper-button>
+    <iron-ajax
+      id="delAjax"
+      handle-as="json"
+      method="DELETE"
+      params$='{"apikey":"{{apikey}}"}'
+      on-response="_handle">
+    </iron-ajax>
+
+    <div id="content">{{message}}</div>
+    
+  </template>
+  <script>
+    Polymer({
+      is:'drop-app',
+      properties :{
+      },
+      _start: function() {
+        this.$.delAjax.url = '/api/dbs/'+this.db;
+        if(this.db==this.confirm) {
+          this.$.dbName.invalid=false;
+          this.$.delAjax.generateRequest();
+        } else {
+          this.$.dbName.invalid=true;
+        }
+
+      },
+      _handle: function(e) {
+        var response = e.detail.response;
+        console.log(e.detail.response);
+        this.message=response.message;
+        this.fire('db-changed',response);
+      }
+    });
+  </script>
+</dom-module>
