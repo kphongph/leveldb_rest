@@ -14,9 +14,6 @@
       :host {
         display:block;
       }
-      #content {
-        background-color:#efefef;
-      }
     </style>
 
     <db-service apikey="{{apikey}}"></db-service>
@@ -31,9 +28,7 @@
        <paper-input label$="Query {{db}} [Start Key]" value="{{startKey}}"></paper-input>
        <paper-button class="indigo" on-click="_start">Query</paper-button>
      </div>
-     <div class="flex">
-      <div id="content" class="flex">
-      </div>
+     <div id="content">
      </div>
     </div>
     
@@ -58,8 +53,8 @@
         var thisObj = this;
         response.forEach(function(data) { 
           var ele=document.createElement('document-item');
-          ele.setAttribute('key', data.key);
-          ele.setAttribute('value',JSON.stringify(data.value));
+          ele.key= data.key;
+          ele.value = data.value;
           thisObj.$.content.appendChild(ele);
         });
       }

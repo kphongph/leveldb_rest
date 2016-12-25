@@ -1,4 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 <dom-module id="document-item">
@@ -8,13 +10,29 @@
       :host {
         display:block;
       }
-      .text {
-        word-wrap:break-word;
+      .containner {
+        background-color:#efefef;
+        margin:15px;
+        spacing:10px;
+        padding:5px;
+      }
+      .keyid {
+        font:@var(--paper-font-body2);
+        margin-left:20px;
+      }
+      #textArea {
+        width:60%;
+        margin-left:20px;
+        background-color:white;
+        font:@var(--paper-font-body2);
       }
     </style>
-    <div class="layout vertical">
-      <div><b>{{key}}</b></div>
-      <div class="flex"><pre>{{_format(value)}}</pre></div>  
+    <div class="layout vertical containner">
+      <div class="keyid">{{key}}</div>
+      <div class="flex">
+        <iron-autogrow-textarea id="textArea" value="{{_format(value)}}">
+        </iron-autogrow-textarea>
+      </div>  
      </div>
     </div>
   </template>
@@ -23,18 +41,13 @@
       is:'document-item',
       properties : {
         key:String,
-        value:String
+        value:Object
       },
-      _format : function(str) {
-        var obj = JSON.parse(str);
-        var rstr = '';
+      _format : function(obj) {
         if((typeof obj) === "object") {
-          for(var key in obj) {
-            rstr += key+':'+obj[key]+'\n';
-          }
-          return rstr;
+          return JSON.stringify(obj,null,2);
         } else {
-          return str;
+          return obj;
         }
       }
     });
