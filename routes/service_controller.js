@@ -1,8 +1,12 @@
-var levelup = require('levelup');
-var stream = require('stream');
 var JSONStream = require('JSONStream');
 var uuid = require('node-uuid');
+var _util = require('util');
+var multiparty = require('multiparty');
+var azure = require('azure');
+var Readable = require('stream').Readable;
 var util = require('../util');
+var config = require('../config');
+var login = require('../login');
 
 module.exports = {
   _getdata: function(req, res) {
@@ -98,5 +102,52 @@ module.exports = {
     util.create_db(db_name,options,function(result) {
       res.json(result);
     });
-  }
+  },
+  _upload_img : function(req,res) {
+    var blobService = azure.createBlobService(config.azure_blob_accountName, config.azure_blob_accessKey);
+    var container = req.params.container;
+	
+    
+    // request as base64 image ex. image.jpg;;data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...
+    if(req.headers['content-type'].indexOf('text/plain') !== -1){
+      var body = '';
+      req.on('data', function (data) { body += data; });
+      req.on('end', function () {
+        var fileName = req.params.filename;
+        var image = new Buffer(body.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+        
+        var s = new Readable();
+        s.push(image); s.push(null);
+        
+        blobService.createBlockBlobFromStream(container, fileName, s, image.length, function(error) {
+          if (error) { res.end(error) }
+        });
+        res.end('OK');
+      });
+    }
+    else{ // request as form action
+      var form = new multiparty.Form();
+      form.on('part', function(part) {
+        if (!part.filename) return;
+        var size = part.byteCount;
+        var name = part.filename;
+        blobService.createBlockBlobFromStream(container, name, part, size, function(error) {
+          if (error) { res.end(error) }
+        });
+      });
+      form.parse(req);
+      res.end('OK');
+    }
+  },
+   _getUser:function(req, res){
+		var key = req.params.key;
+		login._getUser(key, function(err, value){
+			if (err) {
+				res.json({
+        'ok': false});
+			}else{
+				res.json(value);
+			}
+		});
+	}
 };
