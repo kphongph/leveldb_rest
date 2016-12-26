@@ -18,11 +18,14 @@
     "express-authorization": "^1.0.0",
     "express-session": "^1.14.2",
     "fs": "0.0.1-security",
+    "jsonquery-engine": "^1.0.2",
     "level": "^1.5.0",
+    "level-queryengine": "^3.0.1",
     "node-uuid": "^1.4.7",
     "passport": "^0.3.2",
     "passport-localapikey": "0.0.3",
     "path": "^0.12.7",
-    "request": "^2.75.0"
+    "request": "^2.75.0",
+    "subindex": "^3.0.0"
   }
 }

@@ -1,16 +1,10 @@
-var levelup = require('levelup');
-var stream = require('stream');
-var JSONStream = require('JSONStream');
 var uuid = require('node-uuid');
+var JSONStream = require('JSONStream');
 var util = require('../util');
 
 module.exports = {
-  _getdata: function(req, res) {
-    //console.log(req.session);
-    //console.log(req.user);
+  _query: function(req, res) {
     var db_name = req.params.dbs;
-    var key = req.params.id ? req.params.id : '';    
-    //console.log('db_name : '+db_name+'  key : '+key+'  limit : '+limit);
     util.get_dbs(db_name, function(err, db) {
       if (err) {
         res.json({
@@ -18,7 +12,25 @@ module.exports = {
           'message': err
         });
       } else {
-        //res.setHeader('Content-Type', 'application/json');        
+        console.log(req.body);
+       // db.query(req.body).pipe(JSONStream.stringify()).pipe(res);
+        db.query(req.body).on('data',console.log)
+        .on('stats',function(stats) {});
+      }
+    });
+  },
+
+  _getdata: function(req, res) {
+    var db_name = req.params.dbs;
+    var key = req.params.id ? req.params.id : '';    
+    util.get_dbs(db_name, function(err, db) {
+      if (err) {
+        res.json({
+          'ok': false,
+          'message': err
+        });
+      } else {
+
         if (key == '') {
           var opt = {
              limit:50
@@ -33,7 +45,6 @@ module.exports = {
             var limit = parseInt(req.query.limit);
             opt['limit'] = limit?limit:50;
           }
-          console.log(opt);
 
           db.createReadStream(opt)
             .pipe(JSONStream.stringify())
