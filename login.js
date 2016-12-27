@@ -8,10 +8,10 @@ module.exports = {
     var pass = crypto.createHmac('sha256', 'inf@rva+')
       .update(req.body.user + req.body.pass + 'inf@rva+')
       .digest('hex');
-	  
-	var key = req.body.user + ':' + pass;
+
+    var key = req.body.user + ':' + pass;
     console.log(key);
-	
+
     util.get_dbs('user_index_db', function(err, user_index_db) {
       if (err) {
         res.json({
@@ -141,6 +141,18 @@ module.exports = {
             }
           }
         });
+      }
+    });
+  },
+  _getUser_authen: function(req, res) {
+    var key = req.params.key;
+    login._getUser(key, function(err, value) {
+      if (err) {
+        res.json({
+          'ok': false
+        });
+      } else {
+        res.json(value);
       }
     });
   }

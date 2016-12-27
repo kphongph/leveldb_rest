@@ -5,14 +5,12 @@ var controller = require('./service_controller');
 //GET METHOD 
 router.get('/dbs',controller._listdbs); 
 router.get('/dbs/:dbs/:id?', controller._getdata);
-router.get('/getUser/:key?', controller._getUser);
 
 //PUT METHOD 
 router.put('/dbs/:dbs', controller._createdb); 
 
 //POST METHOD 
 router.post('/dbs/:dbs/:id?', controller._putdata);
-router.post('/upload/:container/:filename?', controller._upload_img);
 
 //DELETE METHOD 
 router.delete('/dbs/:dbs/:id', controller._daletedata); 
