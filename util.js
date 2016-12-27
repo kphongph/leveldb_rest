@@ -1,7 +1,4 @@
 var levelup = require('levelup');
-var subindex = require('subindex');
-var levelQuery = require('level-queryengine');
-var jsonqueryEngine = require('jsonquery-engine');
 var config = require('./config');
 var fs = require('fs');
 
@@ -22,6 +19,7 @@ var get_dbs = function(name,options,cb) {
       if (err) {
         cb(err, null);
       } else {
+        /*
         if(config.index[name]) {
           db = levelQuery(db);
           db.query.use(jsonqueryEngine());
@@ -30,6 +28,7 @@ var get_dbs = function(name,options,cb) {
             db.ensureIndex(attr);
           });
         }
+        */
         dbs[name] = {'db':db};
         cb(null, db);
       }
