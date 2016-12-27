@@ -1,6 +1,7 @@
 var levelup = require('levelup');
 var config = require('./config');
 var fs = require('fs');
+var subindex = require('./subindex');
 
 var dbs = {};
 
@@ -22,16 +23,14 @@ var get_dbs = function(name, options, cb) {
       if (err) {
         cb(err, null);
       } else {
-        /*
         if(config.index[name]) {
-          db = levelQuery(db);
-          db.query.use(jsonqueryEngine());
+          db = subindex(db);
           config.index[name].attributes.forEach(function(attr) {
-            console.log(attr);
-            db.ensureIndex(attr);
+            db.ensureIndex(attr.name,attr.map,function() {
+              console.log(attr.name+' indexing complete');
+            });
           });
         }
-        */
         dbs[name] = {
           'db': db
         };

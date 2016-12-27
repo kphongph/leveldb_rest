@@ -11,7 +11,7 @@ router.put('/dbs/:dbs', controller._createdb);
 
 //POST METHOD 
 router.post('/dbs/:dbs/:id?', controller._putdata);
-router.post('/query/:dbs', controller._query);
+router.post('/query/:db/:index', controller._query);
 
 //DELETE METHOD 
 router.delete('/dbs/:dbs/:id', controller._daletedata);

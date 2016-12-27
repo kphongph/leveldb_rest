@@ -4,7 +4,8 @@ var util = require('../util');
 
 module.exports = {
   _query: function(req, res) {
-    var db_name = req.params.dbs;
+    var db_name = req.params.db;
+    var index = req.params.index;
     util.get_dbs(db_name, function(err, db) {
       if (err) {
         res.json({
@@ -12,10 +13,10 @@ module.exports = {
           'message': err
         });
       } else {
-        console.log(req.body);
-        // db.query(req.body).pipe(JSONStream.stringify()).pipe(res);
-        db.query(req.body).on('data', console.log)
-          .on('stats', function(stats) {});
+        console.log(index,req.body);
+        db.indexes[index].createIndexStream(req.body)
+        .pipe(JSONStream.stringify())
+        .pipe(res);
       }
     });
   },

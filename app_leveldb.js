@@ -13,7 +13,7 @@ var config = require('./config');
 var service_interface = require('./routes/service_interface');
 var login = require('./login');
 
-var PORT = process.env.PORT || 9090;
+var PORT = process.env.PORT || config.port;
 var HOST = process.env.HOST || '';
 
 var app = express();
@@ -40,7 +40,7 @@ options = {
   cert: fs.readFileSync(path.join(certsPath, 'server-name.crt.pem')),
   ca: [
     fs.readFileSync(path.join(caCertsPath, 'ca-name.crt.pem'))
-    // ,fs.readFileSync(path.join(caCertsPath, 'root.crt.pem')) 
+    // ,fs.readFileSync(path.join(caCertsPath, 'root.crt.pem'))
   ],
   requestCert: false,
   rejectUnauthorized: true
@@ -59,14 +59,14 @@ passport.deserializeUser(function(id, done) {
   login._getUser(id, done);
 });
 
-// setup permission middleware 
+// setup permission middleware
 var ensureNounVerb = authorization.ensureRequest
   .onDenied(function(req, res, done) {
-    //console.log('done'); 
+    //console.log('done');
     res.json({
       'authroized': false
     });
-    //done(); 
+    //done();
   })
   .isPermitted('noun:verb')
 
@@ -74,9 +74,7 @@ app.post('/login', login._login);
 app.post('/logout', login._logout);
 app.get('/getUser/:key?', login._getUser_authen);
 
-app.use('/api', passport.authenticate('localapikey', {
-  session: true
-}), service_interface);
+app.use('/api', service_interface);
 
 
 https.createServer(options, app).listen(PORT, HOST, null, function() {
