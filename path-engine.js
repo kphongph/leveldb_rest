@@ -1,4 +1,5 @@
 module.exports = pathEngine;
+
 function pathEngine() {
   return {
     query: query,
@@ -20,7 +21,7 @@ function parseQuery(q) {
 
 function propertyPlan(idx, queryParts) {
   var db = this;
-  console.log('propertyPlan',idx);
+  console.log('propertyPlan', idx);
   return db.indexes[idx].createIndexStream({
     start: [queryParts.value, null],
     end: [queryParts.value, undefined]

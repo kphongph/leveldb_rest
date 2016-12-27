@@ -1,9 +1,10 @@
 var Stream = require('stream'),
-    through = require('through'),
-    unique = require('unique-stream'),
-    subindex = require('./subindex');
+  through = require('through'),
+  unique = require('unique-stream'),
+  subindex = require('./subindex');
 
 module.exports = queryengine;
+
 function queryengine(db) {
   db = subindex(db);
   if (!db.query) {
@@ -17,27 +18,32 @@ function queryengine(db) {
 function query(db) {
   var q = [].slice.call(arguments, 1);
   var candidates;
-  var stats = { indexHits: 0, dataHits: 0, matchHits: 0 };
+  var stats = {
+    indexHits: 0,
+    dataHits: 0,
+    matchHits: 0
+  };
   var indexStream = db.query.engine.query.apply(db, q);
   if (indexStream !== null && indexStream instanceof Stream) {
-    indexStream.on('data', function (data) {
+    indexStream.on('data', function(data) {
       stats.indexHits++;
     });
     candidates = indexStream
       .pipe(unique(keyfn))
       .pipe(createValueStream.call(null, db))
-      .on('data', function (data) {
+      .on('data', function(data) {
         stats.dataHits++;
       });
   } else {
     // table scan
     console.log('table scan');
-    candidates = db.main.createReadStream().pipe(through(function (data) {
+    candidates = db.main.createReadStream().pipe(through(function(data) {
       stats.dataHits++;
       if (data.value !== undefined) this.queue(data.value);
     }));
   }
   var values = candidates.pipe(through(
+
     function write(data) {
       if (db.query.engine.match.apply(db, [data].concat(q))) {
         stats.matchHits++;
@@ -67,15 +73,15 @@ function createValueStream(db) {
   var work = 0;
   var ended = false;
 
-  s.write = function (data) {
+  s.write = function(data) {
     work++;
-    db.get(keyfn(data), function (err, value) {
+    db.get(keyfn(data), function(err, value) {
       if (!err) s.emit('data', value);
       if (--work === 0 && ended) s.end();
     });
   };
 
-  s.end = function (data) {
+  s.end = function(data) {
     ended = true;
     if (arguments.length) s.write(data);
     if (work === 0 && s.writable) {
@@ -84,7 +90,7 @@ function createValueStream(db) {
     }
   };
 
-  s.destroy = function () {
+  s.destroy = function() {
     s.writable = false;
   };
 

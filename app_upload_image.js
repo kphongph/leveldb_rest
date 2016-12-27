@@ -52,47 +52,47 @@ app.get('/img', function(req, res) {
 });
 
 app.post('/upload/:container/:filename?', function(req, res) {
- 
-	//var isAuthen = login._isAuthen(apikey, done);	
-    var blobService = azure.createBlobService(config.azure_blob_accountName, config.azure_blob_accessKey);
-    var container = req.params.container;
 
-    // request as base64 image ex. image.jpg;;data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...
-    if (req.headers['content-type'].indexOf('text/plain') !== -1) {
-      var body = '';
-      req.on('data', function(data) {
-        body = data;
-      });
-      req.on('end', function() {
-        var fileName = req.params.filename;
-        var image = new Buffer(body.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+  //var isAuthen = login._isAuthen(apikey, done);	
+  var blobService = azure.createBlobService(config.azure_blob_accountName, config.azure_blob_accessKey);
+  var container = req.params.container;
 
-        var s = new Readable();
-        s.push(image);
-        s.push(null);
+  // request as base64 image ex. image.jpg;;data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...
+  if (req.headers['content-type'].indexOf('text/plain') !== -1) {
+    var body = '';
+    req.on('data', function(data) {
+      body = data;
+    });
+    req.on('end', function() {
+      var fileName = req.params.filename;
+      var image = new Buffer(body.replace(/^data:image\/\w+;base64,/, ''), 'base64');
 
-        blobService.createBlockBlobFromStream(container, fileName, s, image.length, function(error) {
-          if (error) {
-            res.end(error)
-          }
-        });
-        res.end('OK');
+      var s = new Readable();
+      s.push(image);
+      s.push(null);
+
+      blobService.createBlockBlobFromStream(container, fileName, s, image.length, function(error) {
+        if (error) {
+          res.end(error)
+        }
       });
-    } else { // request as form action
-      var form = new multiparty.Form();
-      form.on('part', function(part) {
-        if (!part.filename) return;
-        var size = part.byteCount;
-        var name = part.filename;
-        blobService.createBlockBlobFromStream(container, name, part, size, function(error) {
-          if (error) {
-            res.end(error)
-          }
-        });
-      });
-      form.parse(req);
       res.end('OK');
-    }
+    });
+  } else { // request as form action
+    var form = new multiparty.Form();
+    form.on('part', function(part) {
+      if (!part.filename) return;
+      var size = part.byteCount;
+      var name = part.filename;
+      blobService.createBlockBlobFromStream(container, name, part, size, function(error) {
+        if (error) {
+          res.end(error)
+        }
+      });
+    });
+    form.parse(req);
+    res.end('OK');
+  }
 
 });
 
