@@ -4,7 +4,7 @@ var controller = require('./service_controller');
 
 //GET METHOD 
 router.get('/dbs',controller._listdbs); 
-router.get('/dbs',controller._listdbs); 
+router.get('/dbs/:dbs/:id?', controller._getdata);
 router.get('/getUser/:key?', controller._getUser);
 
 //PUT METHOD 

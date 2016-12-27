@@ -3,16 +3,30 @@
 
 <dom-module id="db-service">
   <template>
+   <iron-ajax 
+     auto
+     method="POST"
+     id="login"
+     handle-as="json"
+     url="/login"
+     content-type="application/json"
+     body='{"user":"490007_011","pass":"khampricha"}'
+     on-response="_handle">
+   </iron-ajax>
   </template>
-
   <script>
     Polymer({
       is:'db-service',
       properties :{
         apikey: {
           type:String,
-          notify:true,
-          value:'test12345'
+          notify:true
+        }
+      },
+      _handle:function(e) {
+        var response = e.detail.response;
+        if(response.status) {
+          this.apikey=response.key;
         }
       }
     });

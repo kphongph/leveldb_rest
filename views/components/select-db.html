@@ -45,10 +45,12 @@
         }
       },
       query:function() {
-        console.log('query');
-        this.$.dropdown._setSelectedItem(null);
-        this.$.dropdown._setSelectedItem();
-        this.$.ajax.generateRequest();
+        console.log('query',this.key);
+        if(this.key) {
+          this.$.dropdown._setSelectedItem(null);
+          this.$.dropdown._setSelectedItem();
+          this.$.ajax.generateRequest();
+        }
       }
     });
   </script>
