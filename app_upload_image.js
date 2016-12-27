@@ -43,7 +43,7 @@ app.get('/img', function(req, res) {
     'content-type': 'text/html'
   });
   res.end(
-    '<form action="/upload/homevisit?apikey=dc6604a0caba11e690c84b1a15c779ac" enctype="multipart/form-data" method="post">' +
+    '<form action="/upload/databasebackup?apikey=dc6604a0caba11e690c84b1a15c779ac" enctype="multipart/form-data" method="post">' +
     '<input type="text" name="title"><br>' +
     '<input type="file" name="upload"><br>' +
     '<input type="submit" value="Upload">' +
@@ -52,7 +52,6 @@ app.get('/img', function(req, res) {
 });
 
 app.post('/upload/:container/:filename?', function(req, res) {
-
   //var isAuthen = login._isAuthen(apikey, done);	
   var blobService = azure.createBlobService(config.azure_blob_accountName, config.azure_blob_accessKey);
   var container = req.params.container;
