@@ -1,7 +1,7 @@
 var levelup = require('levelup');
 var config = require('./config');
 var fs = require('fs');
-var subindex = require('./subindex');
+var levelindex = require('leveldb-index');
 
 var dbs = {};
 
@@ -23,23 +23,17 @@ var get_dbs = function(name, options, cb) {
         cb(err, null);
       } else {
         if(config.index[name]) {
-          db = subindex(db);
+          db = levelindex(db);
           config.index[name].attributes.forEach(function(attr) {
-            console.log('indexing',attr.name);
             db.ensureIndex(attr.name,attr.map,function() {
               console.log(attr.name+' indexing complete');
             });
-            dbs[name] = {
-             'db': db
-            };
-            cb(null, db);
           });
-        }  else {
-          dbs[name] = {
-           'db': db
-          };
-          cb(null, db);
-        }
+        } 
+        dbs[name] = {
+         'db': db
+        };
+        cb(null, db);
       }
     });
   } else {
@@ -87,10 +81,6 @@ var put = function(name, key, value, cb) {
         'message': err
       });
     } else {
-      if(db.main) {
-        console.log('indexing db update');
-        db = db.main;
-      }
       db.put(key, value, function(err) {
         if (err) {
           cb({
@@ -116,7 +106,6 @@ var del = function(name, key, cb) {
         'message': err
       });
     } else {
-      if(db.main) db = db.main;
       db.del(key, function(err) {
         if (err) {
           cb({

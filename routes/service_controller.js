@@ -24,7 +24,6 @@ module.exports = {
     var db_name = req.params.dbs;
     var key = req.params.id ? req.params.id : '';
     util.get_dbs(db_name, function(err, db) {
-      if(db.main) db = db.main;
       if (err) {
         res.json({
           'ok': false,
