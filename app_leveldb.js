@@ -74,8 +74,9 @@ app.post('/login', login._login);
 app.post('/logout', login._logout);
 app.get('/getUser/:key?', login._getUser_authen);
 
-app.use('/api', service_interface);
-
+app.use('/api', passport.authenticate('localapikey', {
+  session: true
+}), service_interface);
 
 https.createServer(options, app).listen(PORT, HOST, null, function() {
   console.log('Server listening on port %d', this.address().port);
