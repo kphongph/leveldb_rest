@@ -134,6 +134,7 @@ function ensureIndex(db, idxName) {
     { start: '\x00', end: '\xFF' },
     function (change, add, batch) {
       if (change.type === 'put') {
+        console.log(change);
         addToIndex(change);
       } else if (change.type === 'del') {
         db.main.get(change.key, function (err, value) {
