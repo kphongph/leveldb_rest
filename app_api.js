@@ -71,6 +71,11 @@ app.get('/img', function(req, res) {
   );
 });
 
+app.get('/servertime', function(req, res) {
+  var long_date = new Date().getTime()
+  res.send(long_date.toString());
+});
+
 app.post('/upload/:container/:filename?', 
 passport.authenticate('localapikey', {
   session: true
