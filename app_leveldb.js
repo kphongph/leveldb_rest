@@ -13,7 +13,7 @@ var config = require('./config');
 var service_interface = require('./routes/service_interface');
 var login = require('./login');
 
-var PORT = process.env.PORT || 9000;
+var PORT = process.env.PORT || config.port;
 var HOST = process.env.HOST || '';
 
 var app = express();
