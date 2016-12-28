@@ -12,7 +12,7 @@ var fs = require('fs');
 var config = require('./config');
 var service_interface = require('./routes/service_interface');
 var login = require('./login');
-
+var getuser = require('./getuser');
 var PORT = process.env.PORT || config.port;
 var HOST = process.env.HOST || '';
 
@@ -72,7 +72,7 @@ var ensureNounVerb = authorization.ensureRequest
 
 app.post('/login', login._login);
 app.post('/logout', login._logout);
-app.get('/getUser/:key?', login._getUser_authen);
+app.get('/getUser/:key?', getuser._getUser_authen);
 
 app.use('/api', service_interface);
 
