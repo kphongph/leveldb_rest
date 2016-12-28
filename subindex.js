@@ -51,7 +51,7 @@ function createIndexStream(db, idxName, options) {
   options.start = encode([idxName].concat(options.start));
   options.end = encode([idxName].concat(options.end));
   
-  console.log(options);
+  // console.log(options);
 
   return db.indexDb.createReadStream(options)
   .pipe(through2.obj(function (data, enc, callback) {
