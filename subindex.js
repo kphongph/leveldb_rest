@@ -162,7 +162,9 @@ function ensureIndex(db, idxName) {
   }
   
 
+  var total =0;
   db.main.createReadStream().on('data', function(dataToIndex) {
+    console.log(total++);
     addToIndex(dataToIndex, function (err) {
       if (count === 0 && ended) cb();
     });

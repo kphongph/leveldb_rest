@@ -25,6 +25,7 @@ var get_dbs = function(name, options, cb) {
         if(config.index[name]) {
           db = subindex(db);
           config.index[name].attributes.forEach(function(attr) {
+            console.log('indexing',attr.name);
             db.ensureIndex(attr.name,attr.map,function() {
               console.log(attr.name+' indexing complete');
             });
