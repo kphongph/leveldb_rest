@@ -56,7 +56,16 @@ function createIndexStream(db, idxName, options) {
   return db.indexDb.createReadStream(options)
   .pipe(through2.obj(function (data, enc, callback) {
    //  console.log(data);
-    callback(null, { key: decode(data.key), value: data.value });
+    if(options.include_doc) {
+      db.main.get(data.value, function (err, value) {
+        callback(null, { 
+          key: decode(data.key), 
+          value: {'doc':value,'key':data.value}
+        });
+      });
+    } else {
+      callback(null, { key: decode(data.key), value: data.value });
+    }
   }));
 }
 
@@ -183,8 +192,6 @@ function getBy(db, index, key, options, cb) {
   console.log(streamOpts);
   db.createIndexStream(index, streamOpts)
   .pipe(through2.obj(function (data, enc, callback) {
-    console.log('found');
-    console.log(data);
     db.main.get(data.value, function (err, value) {
       callback(null, { key: data.value, value: value });
     });
