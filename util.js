@@ -30,10 +30,11 @@ var get_dbs = function(name, options, cb) {
               console.log(attr.name+' indexing complete');
             });
           });
-        }
+        } 
         dbs[name] = {
           'db': db
         };
+
         cb(null, db);
       }
     });
@@ -82,6 +83,7 @@ var put = function(name, key, value, cb) {
         'message': err
       });
     } else {
+      if(db.main) db = db.main;
       db.put(key, value, function(err) {
         if (err) {
           cb({
@@ -107,6 +109,7 @@ var del = function(name, key, cb) {
         'message': err
       });
     } else {
+      if(db.main) db = db.main;
       db.del(key, function(err) {
         if (err) {
           cb({
