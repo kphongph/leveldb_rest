@@ -13,7 +13,6 @@ module.exports = {
           'message': err
         });
       } else {
-        console.log(index,req.body);
         db.indexes[index].createIndexStream(req.body)
         .pipe(JSONStream.stringify())
         .pipe(res);
@@ -25,6 +24,7 @@ module.exports = {
     var db_name = req.params.dbs;
     var key = req.params.id ? req.params.id : '';
     util.get_dbs(db_name, function(err, db) {
+      if(db.main) db = db.main;
       if (err) {
         res.json({
           'ok': false,

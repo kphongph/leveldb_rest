@@ -14,7 +14,6 @@ var get_dbs = function(name, options, cb) {
   }
 
   if (!dbs[name]) {
-    console.log('create ', name);
     var re = /_index$/;
     if (re.test(name)) {
       options['valueEncoding'] = 'utf8';
@@ -26,15 +25,21 @@ var get_dbs = function(name, options, cb) {
         if(config.index[name]) {
           db = subindex(db);
           config.index[name].attributes.forEach(function(attr) {
+            console.log('indexing',attr.name);
             db.ensureIndex(attr.name,attr.map,function() {
               console.log(attr.name+' indexing complete');
             });
+            dbs[name] = {
+             'db': db
+            };
+            cb(null, db);
           });
+        }  else {
+          dbs[name] = {
+           'db': db
+          };
+          cb(null, db);
         }
-        dbs[name] = {
-          'db': db
-        };
-        cb(null, db);
       }
     });
   } else {
@@ -82,6 +87,10 @@ var put = function(name, key, value, cb) {
         'message': err
       });
     } else {
+      if(db.main) {
+        console.log('indexing db update');
+        db = db.main;
+      }
       db.put(key, value, function(err) {
         if (err) {
           cb({
@@ -107,6 +116,7 @@ var del = function(name, key, cb) {
         'message': err
       });
     } else {
+      if(db.main) db = db.main;
       db.del(key, function(err) {
         if (err) {
           cb({

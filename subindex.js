@@ -51,7 +51,7 @@ function createIndexStream(db, idxName, options) {
   options.start = encode([idxName].concat(options.start));
   options.end = encode([idxName].concat(options.end));
   
-  console.log(options);
+  // console.log(options);
 
   return db.indexDb.createReadStream(options)
   .pipe(through2.obj(function (data, enc, callback) {
@@ -134,6 +134,7 @@ function ensureIndex(db, idxName) {
     { start: '\x00', end: '\xFF' },
     function (change, add, batch) {
       if (change.type === 'put') {
+        console.log(change);
         addToIndex(change);
       } else if (change.type === 'del') {
         db.main.get(change.key, function (err, value) {
@@ -161,7 +162,9 @@ function ensureIndex(db, idxName) {
   }
   
 
+  var total =0;
   db.main.createReadStream().on('data', function(dataToIndex) {
+    console.log(total++);
     addToIndex(dataToIndex, function (err) {
       if (count === 0 && ended) cb();
     });
