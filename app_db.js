@@ -80,7 +80,10 @@ app.use('/api', passport.authenticate('localapikey', {
 }), service_interface);
 */
 
-app.use('/api', service_interface);
+app.use('/api',
+passport.authenticate('localapikey', {
+  session: true
+}), service_interface);
 
 https.createServer(options, app).listen(PORT, HOST, null, function() {
   console.log('Server listening on port %d', this.address().port);

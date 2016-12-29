@@ -86,7 +86,7 @@ passport.authenticate('localapikey', {
   if (req.headers['content-type'].indexOf('text/plain') !== -1) {
     var body = '';
     req.on('data', function(data) {
-      body = data;
+      body += data;
     });
     req.on('end', function() {
       var fileName = req.params.filename;
