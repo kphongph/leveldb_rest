@@ -24,7 +24,6 @@ var get_dbs = function(name, options, cb) {
         cb(err, null);
       } else {
         if(config.index[name]) {
-          db = levelindex(db);
           config.index[name].attributes.forEach(function(attr) {
             db.ensureIndex(attr.name,attr.map,function() {
               console.log(attr.name+' indexing complete');
