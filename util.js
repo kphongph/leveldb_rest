@@ -19,6 +19,7 @@ var get_dbs = function(name, options, cb) {
       options['valueEncoding'] = 'utf8';
     }
     levelup(config.db_path + '/' + name, options, function(err, db) {
+      db = levelindex(db);
       if (err) {
         cb(err, null);
       } else {
