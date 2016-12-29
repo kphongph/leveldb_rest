@@ -11,6 +11,7 @@ var fs = require('fs');
 var multiparty = require('multiparty');
 var azure = require('azure');
 var Readable = require('stream').Readable;
+var request = require('request');
 var login = require('./login');
 var config = require('./config');
 
@@ -46,18 +47,6 @@ options = {
 };
 /*---ssl certificate---*/
 
-passport.use(new LocalStrategy(function(apikey, done) {
-  login._isAuthen(apikey, done)
-}));
-
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  login._getUser(id, done);
-});
-
 app.get('/img', function(req, res) {
   res.writeHead(200, {
     'content-type': 'text/html'
@@ -76,17 +65,40 @@ app.get('/servertime', function(req, res) {
   res.send(long_date.toString());
 });
 
-app.post('/upload/:container/:filename?',
-passport.authenticate('localapikey', {
-  session: true
-}), function(req, res) {
+app.post('/upload/:container/:filename?', function(req, res) {
+  var apikey = req.query.apikey;
+  console.log('apikey', apikey);
+  request({
+    method: 'GET',
+    uri: 'https://maas.nuqlis.com:9000/getUser/' + apikey + '?apikey=' + apikey,
+  }, function(err, httpResponse, body) {
+    if (err) {
+      res.send({
+        'ok': false,
+        'message': err
+      });
+    } else {
+      if (body === false) {
+        res.send({
+          'ok': false,
+          'message': err
+        });
+      } else {
+        _upload(req, res);
+      }
+    }
+  });
+
+});
+
+function _upload(req, res) {
   var blobService = azure.createBlobService(config.azure_blob_accountName, config.azure_blob_accessKey);
   var container = req.params.container;
 
   if (req.headers['content-type'].indexOf('text/plain') !== -1) {
     var body = '';
     req.on('data', function(data) {
-      body = data;
+      body += data;
     });
     req.on('end', function() {
       var fileName = req.params.filename;
@@ -119,7 +131,7 @@ passport.authenticate('localapikey', {
     res.end('OK');
   }
 
-});
+}
 
 https.createServer(options, app).listen(PORT, HOST, null, function() {
   console.log('Server listening on port %d', this.address().port);
