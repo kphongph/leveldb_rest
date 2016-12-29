@@ -18,24 +18,19 @@ var get_dbs = function(name, options, cb) {
     if (re.test(name)) {
       options['valueEncoding'] = 'utf8';
     }
-    levelup(config.db_path + '/' + name, options, function(err, db) {
-      db = levelindex(db);
-      if (err) {
-        cb(err, null);
-      } else {
-        if(config.index[name]) {
-          config.index[name].attributes.forEach(function(attr) {
-            db.ensureIndex(attr.name,attr.map,function() {
-              console.log(attr.name+' indexing complete');
-            });
-          });
-        } 
-        dbs[name] = {
-         'db': db
-        };
-        cb(null, db);
-      }
-    });
+    var db = levelup(config.db_path + '/' + name, options); 
+    db = levelindex(db);
+    if(config.index[name]) {
+      config.index[name].attributes.forEach(function(attr) {
+        db.ensureIndex(attr.name,attr.map,function() {
+          console.log(attr.name+' indexing complete');
+        });
+      });
+    } 
+    dbs[name] = {
+     'db': db
+    };
+    cb(null, db);
   } else {
     cb(null, dbs[name].db);
   }
