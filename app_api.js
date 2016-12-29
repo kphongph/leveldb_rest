@@ -76,15 +76,13 @@ app.get('/servertime', function(req, res) {
   res.send(long_date.toString());
 });
 
-app.post('/upload/:container/:filename?', 
+app.post('/upload/:container/:filename?',
 passport.authenticate('localapikey', {
   session: true
 }), function(req, res) {
-  //var isAuthen = login._isAuthen(apikey, done);	
   var blobService = azure.createBlobService(config.azure_blob_accountName, config.azure_blob_accessKey);
   var container = req.params.container;
 
-  // request as base64 image ex. image.jpg;;data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ...
   if (req.headers['content-type'].indexOf('text/plain') !== -1) {
     var body = '';
     req.on('data', function(data) {
