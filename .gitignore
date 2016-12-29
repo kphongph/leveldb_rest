@@ -37,5 +37,6 @@ jspm_packages
 .node_repl_history
 config.js
 databases/*
+databases_index/*
 tools/*
 views/bower_components/*
