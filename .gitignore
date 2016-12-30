@@ -38,4 +38,6 @@ jspm_packages
 config.js
 databases/*
 z_*
+databases_index/*
+tools/*
 views/bower_components/*

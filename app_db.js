@@ -74,7 +74,14 @@ app.post('/login', login._login);
 app.post('/logout', login._logout);
 app.get('/getUser/:key?', getuser._getUser_authen);
 
+/*
 app.use('/api', passport.authenticate('localapikey', {
+  session: true
+}), service_interface);
+*/
+
+app.use('/api',
+passport.authenticate('localapikey', {
   session: true
 }), service_interface);
 
