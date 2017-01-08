@@ -14,12 +14,11 @@ module.exports = {
         });
       } else {
         db.indexes[index].createIndexStream(req.body)
-        .pipe(JSONStream.stringify())
-        .pipe(res);
+          .pipe(JSONStream.stringify())
+          .pipe(res);
       }
     });
   },
-
   _getdata: function(req, res) {
     var db_name = req.params.dbs;
     var key = req.params.id ? req.params.id : '';
@@ -65,16 +64,17 @@ module.exports = {
       }
     });
   },
-
   _putdata: function(req, res) {
     var db_name = req.params.dbs;
     var _key = req.params.id ? req.params.id : uuid.v1();
     var _key = _key.replace(/-/g, '');
     var _value = req.body;
     delete _value.apikey;
-    if (_value['.id']) {
-      util.put(db_name, _key, _value['.id'], function(result) {
-        res.json(result);
+    if (req.params.id) {
+      util.del(db_name, _key, function(result) {
+        util.put(db_name, _key, _value, function(result) {
+          res.json(result);
+        });
       });
     } else {
       util.put(db_name, _key, _value, function(result) {
@@ -82,7 +82,6 @@ module.exports = {
       });
     }
   },
-
   _daletedata: function(req, res) {
     var db_name = req.params.dbs;
     var _key = req.params.id;
