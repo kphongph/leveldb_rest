@@ -44,4 +44,4 @@ databases_index/*
 tools/*
 .vscode/*
 views/bower_components/*
-/.vs/leveldb_rest/v14
+/.vs/*
