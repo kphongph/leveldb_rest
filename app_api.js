@@ -40,7 +40,7 @@ options = {
   cert: fs.readFileSync(path.join(certsPath, 'server-name.crt.pem')),
   ca: [
     fs.readFileSync(path.join(caCertsPath, 'ca-name.crt.pem'))
-    // ,fs.readFileSync(path.join(caCertsPath, 'root.crt.pem')) 
+    // ,fs.readFileSync(path.join(caCertsPath, 'root.crt.pem'))
   ],
   requestCert: false,
   rejectUnauthorized: true
@@ -67,7 +67,7 @@ app.get('/servertime', function(req, res) {
 
 app.post('/upload/:container/:filename?', function(req, res) {
   var apikey = req.query.apikey;
-  console.log('apikey', apikey);
+ // console.log('apikey', apikey);
   request({
     method: 'GET',
     uri: 'https://maas.nuqlis.com:9000/getUser/' + apikey + '?apikey=' + apikey,
@@ -113,7 +113,11 @@ function _upload(req, res) {
           res.end(error)
         }
       });
-      res.end('OK');
+      res.json({
+
+        'ok': true
+
+      });
     });
   } else { // request as form action
     var form = new multiparty.Form();
@@ -128,7 +132,9 @@ function _upload(req, res) {
       });
     });
     form.parse(req);
-    res.end('OK');
+    res.json({
+      'ok': true
+    });
   }
 
 }
