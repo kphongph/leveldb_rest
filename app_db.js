@@ -5,14 +5,14 @@ var passport = require('passport');
 var LocalStrategy = require('passport-localapikey').Strategy;
 var session = require('express-session');
 var authorization = require('express-authorization');
-var https = require('https');
 var path = require('path');
-var fs = require('fs');
+var https = require('https');
 
-var config = require('./config');
 var service_interface = require('./routes/service_interface');
+var config = require('./config');
 var login = require('./login');
-var getuser = require('./getuser');
+var ssl = require('./ssl_option');
+
 var PORT = process.env.PORT || config.port;
 var HOST = process.env.HOST || '';
 
@@ -30,22 +30,6 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(express.static(path.join(__dirname, 'views')));
-
-var certsPath = path.join(__dirname, 'ssl_certificate', 'server');
-var caCertsPath = path.join(__dirname, 'ssl_certificate', 'ca');
-
-/*---ssl certificate---*/
-options = {
-  key: fs.readFileSync(path.join(certsPath, 'my-server.key.pem')),
-  cert: fs.readFileSync(path.join(certsPath, 'server-name.crt.pem')),
-  ca: [
-    fs.readFileSync(path.join(caCertsPath, 'ca-name.crt.pem'))
-    // ,fs.readFileSync(path.join(caCertsPath, 'root.crt.pem'))
-  ],
-  requestCert: false,
-  rejectUnauthorized: true
-};
-/*---ssl certificate---*/
 
 passport.use(new LocalStrategy(function(apikey, done) {
   login._isAuthen(apikey, done)
@@ -71,13 +55,10 @@ var ensureNounVerb = authorization.ensureRequest
   .isPermitted('noun:verb')
 
 app.post('/login', login._login);
-app.post('/logout', login._logout);
-app.get('/getUser/:key?', getuser._getUser_authen);
+app.post('/logout', login._logout);          
 
 /*
-app.use('/api', passport.authenticate('localapikey', {
-  session: true
-}), service_interface);
+app.use('/api', service_interface);
 */
 
 app.use('/api',
@@ -85,6 +66,6 @@ passport.authenticate('localapikey', {
   session: true
 }), service_interface);
 
-https.createServer(options, app).listen(PORT, HOST, null, function() {
+https.createServer(ssl.options, app).listen(PORT, HOST, null, function() {
   console.log('Server listening on port %d', this.address().port);
 });
