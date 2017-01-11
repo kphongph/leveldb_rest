@@ -36,9 +36,12 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 config.js
+ssl_option.js
+leveldb_rest.sln
 databases/*
 z_*
 databases_index/*
 tools/*
 .vscode/*
 views/bower_components/*
+/.vs/leveldb_rest/v14
