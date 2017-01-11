@@ -40,4 +40,5 @@ databases/*
 z_*
 databases_index/*
 tools/*
+.vscode/*
 views/bower_components/*
