@@ -40,6 +40,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
+  //console.log(id);
   login._getUser(id, done);
 });
 

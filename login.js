@@ -4,7 +4,7 @@ var crypto = require('crypto');
 var util = require('./util');
 const loginTimeOut = 30;
 
-var getuser = function (username, cb) {
+var findByUsername = function (username, cb) {
   //console.log('\n---getuser function---\n',username);
   util.get_dbs('user_db', function (err, db) {
     //console.log('\n---database name---\n',db);
@@ -28,11 +28,30 @@ var getuser = function (username, cb) {
   });
 }
 
+var findByID = function (id, done) {
+  util.get_dbs('user_db', function (err, user_db) {
+    if (err) {
+      res.json({
+        'ok': false,
+        'message': err
+      });
+    } else {
+      user_db.get(id, function (err, value) {
+        if (err) {
+          done(null, false);
+        } else {
+          done(null, value)
+        }
+      });
+    }
+  });
+};
+
 module.exports = {
   _login: function (req, res) {
     var _username = req.body.user;
     var _pass = req.body.pass;
-    getuser(_username, function (found, user) {
+    findByUsername(_username, function (found, user) {
       //console.log('\n---found---\n',found,'\n---user---\n',user);    
       if (found) {
         var pass = crypto.createHmac('sha256', 'inf@rva+')
@@ -100,7 +119,16 @@ module.exports = {
       }
     });
   },
-  _isAuthen: function (apikey, done) {
+  _getUser: function (id, done) {
+    findByID(id, function (err, value) {
+      if (err) {
+        done(null, false);
+      } else {
+        done(null, value)
+      }
+    });
+  },
+  _isAuthen: function (id, done) {
     util.get_dbs('authen_db', function (err, authen_db) {
       if (err) {
         res.json({
@@ -108,34 +136,22 @@ module.exports = {
           'message': err
         });
       } else {
-        authen_db.get(apikey, function (err, value) {
+        authen_db.get(id, function (err, value) {
           if (err) {
             done(null, false);
           } else {
+
             var diff = Math.abs(new Date(value.timestamp) - new Date());
             var minutes = Math.floor((diff / 1000) / 60);
 
             if (minutes > loginTimeOut) {
               done(null, false);
             } else {
-              var key = value.key;
-
-              util.get_dbs('user_db', function (err, user_db) {
+              findByID(id, function (err, value) {
                 if (err) {
-                  res.json({
-                    'ok': false,
-                    'message': err
-                  });
+                  done(null, false);
                 } else {
-                  user_db.get(apikey, function (err, value) {
-                    if (err) {
-                      done(null, false);
-                    } else {
-                      value.id = key;
-                      value.permissions = ['noun:*'];
-                      done(null, value);
-                    }
-                  });
+                  done(null, value)
                 }
               });
             }
