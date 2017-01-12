@@ -12,17 +12,14 @@ var multiparty = require('multiparty');
 var azure = require('azure');
 var Readable = require('stream').Readable;
 var request = require('request');
-var login = require('./login');
 var config = require('./config');
+var ssl = require('./ssl_option');
 
 var PORT = process.env.PORT || 9001;
 var HOST = process.env.HOST || '';
 
 var app = express();
 
-app.use(session({
-  secret: config.session_key
-}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors());
@@ -34,25 +31,12 @@ app.use(bodyParser.urlencoded({
 var certsPath = path.join(__dirname, 'ssl_certificate', 'server');
 var caCertsPath = path.join(__dirname, 'ssl_certificate', 'ca');
 
-/*---ssl certificate---*/
-options = {
-  key: fs.readFileSync(path.join(certsPath, 'my-server.key.pem')),
-  cert: fs.readFileSync(path.join(certsPath, 'server-name.crt.pem')),
-  ca: [
-    fs.readFileSync(path.join(caCertsPath, 'ca-name.crt.pem'))
-    // ,fs.readFileSync(path.join(caCertsPath, 'root.crt.pem'))
-  ],
-  requestCert: false,
-  rejectUnauthorized: true
-};
-/*---ssl certificate---*/
-
 app.get('/img', function(req, res) {
   res.writeHead(200, {
     'content-type': 'text/html'
   });
   res.end(
-    '<form action="/upload/databasebackup?apikey=b3ab8110cbfb11e6b935495cf12a55bb" enctype="multipart/form-data" method="post">' +
+    '<form action="/upload/databasebackup?apikey=f8b07970d7bb11e6b225df00650491c9" enctype="multipart/form-data" method="post">' +
     '<input type="text" name="title"><br>' +
     '<input type="file" name="upload"><br>' +
     '<input type="submit" value="Upload">' +
@@ -67,25 +51,38 @@ app.get('/servertime', function(req, res) {
 
 app.post('/upload/:container/:filename?', function(req, res) {
   var apikey = req.query.apikey;
- // console.log('apikey', apikey);
+  var uri = 'https://maas.nuqlis.com:9000/api/dbs/user_db/' + apikey + '?apikey=' + apikey;
+  //console.log('apikey : ', apikey,'\n uri : ',uri);
   request({
     method: 'GET',
-    uri: 'https://maas.nuqlis.com:9000/getUser/' + apikey + '?apikey=' + apikey,
+	json:true,
+    uri: uri,
   }, function(err, httpResponse, body) {
+	  //console.log('\n--body--\n',body);
     if (err) {
+		//console.log('\n--if--\n',err);
       res.send({
         'ok': false,
         'message': err
       });
     } else {
-      if (body === false) {
+		//console.log('\n--else--\n',err);		
+      if (body === false || body === 'Unauthorized') {
         res.send({
           'ok': false,
           'message': err
         });
       } else {
-        _upload(req, res);
-      }
+		  //console.log('body.id : ', body.id,'\napikey : ',apikey);
+		  if(body.id === apikey){
+			  _upload(req, res);
+		  }else{			  
+          res.send({
+          'ok': false,
+          'message': err
+        });
+        }		          
+      }	  	
     }
   });
 
@@ -114,9 +111,7 @@ function _upload(req, res) {
         }
       });
       res.json({
-
         'ok': true
-
       });
     });
   } else { // request as form action
@@ -136,9 +131,8 @@ function _upload(req, res) {
       'ok': true
     });
   }
-
 }
 
-https.createServer(options, app).listen(PORT, HOST, null, function() {
+https.createServer(ssl.options, app).listen(PORT, HOST, null, function() {
   console.log('Server listening on port %d', this.address().port);
 });
