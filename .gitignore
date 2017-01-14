@@ -37,11 +37,13 @@ jspm_packages
 .node_repl_history
 config.js
 ssl_certificate/*
+cmd/*
 leveldb_rest.sln
 databases/*
 z_*
 databases_index/*
-tools/*
 .vscode/*
 views/bower_components/*
 /.vs/*
+/json_file/*
+/import_user_from_json.js
