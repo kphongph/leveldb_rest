@@ -9,6 +9,7 @@ var path = require('path');
 var https = require('https');
 
 var service_interface = require('./routes/service_interface');
+var forever_log = require('./routes/forever_log');
 var config = require('./config');
 var login = require('./login');
 var ssl = require('./ssl_option');
@@ -57,6 +58,7 @@ var ensureNounVerb = authorization.ensureRequest
 
 app.post('/login', login._login);
 app.post('/logout', login._logout);          
+app.use('/forever', forever_log);
 
 /*
 app.use('/api', service_interface);
