@@ -49,7 +49,7 @@ module.exports = {
 
     obj.Pass_Salt = pass_salt;
     obj.Pass_Hash = pass_hash
-    console.log('--reset password--\n',obj.User,passtmp);
+    console.log('--reset password--\n','Username : ',obj.User,'Password : ',passtmp);
     var uri = login_endpoint + obj.id + '?apikey=' + apiKey;
     request_core.post_request(uri, obj, function (err, data) {
       if (err) {
@@ -67,7 +67,6 @@ module.exports = {
           };
 
           mail._sendmail(sendMailObj, function (mailres) {
-            console.log('--mail--\n',sendMailObj);
             res.json(mailres);
           });
         }

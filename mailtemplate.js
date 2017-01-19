@@ -15,14 +15,14 @@ module.exports = {
                         <tr>\
                           <td style="width:65px"><img src="' + config.webdomain + 'pic/obec.jpg" width="50" height="50" style="display:block; margin-right:15px"> </td>\
                           <td style="vertical-align:top; color:#737373 ;vertical-align:middle" >\
-                            <p style="margin:0; line-height:1.3em">เรียนคุณ ' + nameWithoutTitle + ' </p>\
+                             <p style="margin:0; line-height:1.3em">เรียนคุณ ' + nameWithoutTitle + ' </p>\
                           </td>\
                         </tr>\
                       </tbody>\
                     </table>\
                     <div style="border-bottom:1px solid #f4f4f4; padding-bottom:3px; margin-bottom:20px; font-size:16px; line-height:1.5em">\
                       <p></p>\
-                      <p>User และ password ใหม่สำหรับการเข้าใช้งานระบบของคุณคือ </p>\
+                      <p>Username และ Password ใหม่สำหรับการเข้าใช้งานระบบของคุณคือ </p>\
                       <p>username : ' + user + ' </p>\
                       <p>password : ' + pass + ' </p>\
                       <p>----------------------------------------------------------------------</p>\
@@ -35,3 +35,4 @@ module.exports = {
           </div>';
   }
 }
+

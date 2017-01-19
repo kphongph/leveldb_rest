@@ -1,7 +1,6 @@
-var config = require('./config');
-
-// using SendGrid's v3 Node.js Library
 // https://github.com/sendgrid/sendgrid-nodejs
+
+var config = require('./config');
 var helper = require('sendgrid').mail
 
 module.exports = {
@@ -20,7 +19,6 @@ module.exports = {
     });
 
     sg.API(request, function(error, response) {
-      console.log('--API mail\n--',response);
       if(response.statusCode >=  200 && response.statusCode < 300 ){
         cb({
           status: true
