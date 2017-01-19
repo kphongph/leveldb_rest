@@ -20,6 +20,7 @@ module.exports = {
     });
 
     sg.API(request, function(error, response) {
+      console.log('--API mail\n--',response);
       if(response.statusCode >=  200 && response.statusCode < 300 ){
         cb({
           status: true

@@ -7,13 +7,12 @@ var mailtemplate = require('./mailtemplate');
 var request_core = require('./request_core');
 var encryption = require('./encryption');
 
-var login_endpoint = 'https://mass.nuqlis.com:9000/api/dbs/user_db/';
+var login_endpoint = 'https://maas.nuqlis.com:9000/api/dbs/user_db/';
 
 module.exports = {
   _user: function (req, res) {
-    var obj = req.body.data;
-    console.log('_user', data);
 
+    var obj = req.body.data;
     var str = uuid.v1();
     var _key = str.replace(/-/g, '');
 
@@ -31,13 +30,16 @@ module.exports = {
       if (err) {
         res.json(data);
       } else {
-        if (data === false || data === 'Unauthorized') {
+        if (data.ok === false || data === 'Unauthorized') {
+          res.json(data);
+        }else{
           res.json(data);
         }
       }
     });
   },
   _resetpass: function (req, res) {
+
     var obj = req.body.data;
     var apiKey = req.body.key;
     var passtmp = encryption.random6charactor();
@@ -47,13 +49,13 @@ module.exports = {
 
     obj.Pass_Salt = pass_salt;
     obj.Pass_Hash = pass_hash
-
+    console.log('--reset password--\n',obj.User,passtmp);
     var uri = login_endpoint + obj.id + '?apikey=' + apiKey;
     request_core.post_request(uri, obj, function (err, data) {
       if (err) {
         res.json(data);
       } else {
-        if (data === false || data === 'Unauthorized') {
+        if (data.ok === false || data === 'Unauthorized') {
           res.json(data);
         } else {
           var sendMailObj = {
@@ -65,6 +67,7 @@ module.exports = {
           };
 
           mail._sendmail(sendMailObj, function (mailres) {
+            console.log('--mail--\n',sendMailObj);
             res.json(mailres);
           });
         }
@@ -74,11 +77,11 @@ module.exports = {
   _edituser: function (req, res) {
     var obj = req.body.data;
     var uri = login_endpoint + obj.id + '?apikey=' + req.body.key;
-    request_core.post_request(uri, obj, function (err, data) {      
+    request_core.post_request(uri, obj, function (err, data) {
       if (err) {
         res.json(data);
       } else {
-        if (data === false || data === 'Unauthorized') {
+        if (data.ok === false || data === 'Unauthorized') {
           res.json(data);
         } else {
           res.json(data);
@@ -90,7 +93,6 @@ module.exports = {
     var obj = req.body.data;
     var pass_salt = encryption.password_salt(obj.Pass);
     var pass_hash = encryption.password_hash(obj.Pass, pass_salt);
-
     obj.Pass_Salt = pass_salt;
     obj.Pass_Hash = pass_hash
     delete obj.Pass;
@@ -100,7 +102,9 @@ module.exports = {
       if (err) {
         res.json(data);
       } else {
-        if (data === false || data === 'Unauthorized') {
+        if (data.ok === false || data === 'Unauthorized') {
+          res.json(data);
+        }else{
           res.json(data);
         }
       }

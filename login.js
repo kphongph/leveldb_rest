@@ -43,7 +43,7 @@ var findByID = function (id, done) {
     }
   });
 };
- 
+
 module.exports = {
   _login: function (req, res) {
     var _username = req.body.user;
@@ -65,7 +65,7 @@ module.exports = {
               });
             } else {
               authen_db.put(key, obj, function (err) {
-                console.log('\n---authen_db---\n', _username, ' : ', new Date(obj.timestamp));
+                console.log('---authen_db---\n', _username, ' : ', new Date(obj.timestamp));
                 if (err) {
                   res.json({
                     status: false
