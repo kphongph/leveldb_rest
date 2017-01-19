@@ -33,22 +33,22 @@ app.use(bodyParser.urlencoded({
 
 app.use(express.static(path.join(__dirname, 'views')));
 
-passport.use(new LocalStrategy(function(apikey, done) {
+passport.use(new LocalStrategy(function (apikey, done) {
   login._isAuthen(apikey, done)
 }));
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
   done(null, user.id);
 });
 
-passport.deserializeUser(function(id, done) {
+passport.deserializeUser(function (id, done) {
   //console.log(id);
   login._getUser(id, done);
 });
 
 // setup permission middleware
 var ensureNounVerb = authorization.ensureRequest
-  .onDenied(function(req, res, done) {
+  .onDenied(function (req, res, done) {
     //console.log('done');
     res.json({
       'authroized': false
@@ -64,9 +64,10 @@ app.use('/forever', forever_log);
 /*
 app.use('/api', service_interface);
 */
-app.use('/api',passport.authenticate('localapikey', {
+app.use('/api', passport.authenticate('localapikey', {
   session: true
 }), service_interface);
-https.createServer(ssl.options, app).listen(PORT, HOST, null, function() {
+
+https.createServer(ssl.options, app).listen(PORT, HOST, null, function () {
   console.log('Server listening on port %d', this.address().port);
 });

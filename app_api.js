@@ -13,6 +13,8 @@ var azure = require('azure');
 var Readable = require('stream').Readable;
 var request = require('request');
 var config = require('./config');
+var login = require('./login');
+var adminuser = require('./adminuser');
 var ssl = require('./ssl_option');
 
 var PORT = process.env.PORT || 9001;
@@ -28,76 +30,76 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-var certsPath = path.join(__dirname, 'ssl_certificate', 'server');
-var caCertsPath = path.join(__dirname, 'ssl_certificate', 'ca');
-
-app.get('/img', function(req, res) {
+app.get('/img', function (req, res) {
   res.writeHead(200, {
     'content-type': 'text/html'
   });
   res.end(
-    '<form action="/upload/databasebackup?apikey=f8b07970d7bb11e6b225df00650491c9" enctype="multipart/form-data" method="post">' +
+    '<form action="/upload/databasebackup?apikey=83969040dd9f11e6bc01774977b2f887" enctype="multipart/form-data" method="post">' +
     '<input type="text" name="title"><br>' +
     '<input type="file" name="upload"><br>' +
     '<input type="submit" value="Upload">' +
     '</form>'
   );
 });
-
-app.get('/servertime', function(req, res) {
+app.get('/servertime', function (req, res) {
   var long_date = new Date().getTime()
   res.send(long_date.toString());
 });
+app.post('/user', adminuser._user);
+app.post('/resetpass', adminuser._resetpass);
+app.post('/edituser', adminuser._edituser);
 
-app.post('/upload/:container/:filename?', function(req, res) {
+app.post('/changepass', adminuser._changepass);
+app.post('/upload/:container/:filename?', function (req, res) {
   var apikey = req.query.apikey;
   var uri = 'https://maas.nuqlis.com:9000/api/dbs/user_db/' + apikey + '?apikey=' + apikey;
   //console.log('apikey : ', apikey,'\n uri : ',uri);
   request({
     method: 'GET',
-	json:true,
+    json: true,
     uri: uri,
-  }, function(err, httpResponse, body) {
-	  //console.log('\n--body--\n',body);
+  }, function (err, httpResponse, body) {
+    //console.log('\n--body--\n',body);
     if (err) {
-		//console.log('\n--if--\n',err);
+      //console.log('\n--if--\n',err);
       res.send({
         'ok': false,
         'message': err
       });
     } else {
-		//console.log('\n--else--\n',err);		
+      //console.log('\n--else--\n',err);
       if (body === false || body === 'Unauthorized') {
         res.send({
           'ok': false,
           'message': err
         });
       } else {
-		  //console.log('body.id : ', body.id,'\napikey : ',apikey);
-		  if(body.id === apikey){
-			  _upload(req, res);
-		  }else{			  
+        //console.log('body.id : ', body.id,'\napikey : ',apikey);
+        if (body.id === apikey) {
+          _upload(req, res);
+        } else {
           res.send({
-          'ok': false,
-          'message': err
-        });
-        }		          
-      }	  	
+            'ok': false,
+            'message': err
+          });
+        }
+      }
     }
   });
 
 });
 
-function _upload(req, res) {
+var _upload = function (req, res) {
   var blobService = azure.createBlobService(config.azure_blob_accountName, config.azure_blob_accessKey);
   var container = req.params.container;
 
   if (req.headers['content-type'].indexOf('text/plain') !== -1) {
     var body = '';
-    req.on('data', function(data) {
+    req.on('data', function (data) {
       body += data;
     });
-    req.on('end', function() {
+    req.on('end', function () {
       var fileName = req.params.filename;
       var image = new Buffer(body.replace(/^data:image\/\w+;base64,/, ''), 'base64');
 
@@ -105,7 +107,7 @@ function _upload(req, res) {
       s.push(image);
       s.push(null);
 
-      blobService.createBlockBlobFromStream(container, fileName, s, image.length, function(error) {
+      blobService.createBlockBlobFromStream(container, fileName, s, image.length, function (error) {
         if (error) {
           res.end(error)
         }
@@ -116,11 +118,11 @@ function _upload(req, res) {
     });
   } else { // request as form action
     var form = new multiparty.Form();
-    form.on('part', function(part) {
+    form.on('part', function (part) {
       if (!part.filename) return;
       var size = part.byteCount;
       var name = part.filename;
-      blobService.createBlockBlobFromStream(container, name, part, size, function(error) {
+      blobService.createBlockBlobFromStream(container, name, part, size, function (error) {
         if (error) {
           res.end(error)
         }
@@ -131,8 +133,8 @@ function _upload(req, res) {
       'ok': true
     });
   }
-}
+};
 
-https.createServer(ssl.options, app).listen(PORT, HOST, null, function() {
+https.createServer(ssl.options, app).listen(PORT, HOST, null, function () {
   console.log('Server listening on port %d', this.address().port);
 });

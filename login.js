@@ -1,7 +1,7 @@
 var level = require('level');
 var stream = require('stream');
-var crypto = require('crypto');
 var util = require('./util');
+var encryption = require('./encryption');
 const loginTimeOut = 30;
 
 var findByUsername = function (username, cb) {
@@ -43,23 +43,14 @@ var findByID = function (id, done) {
     }
   });
 };
-
-var password_hash = function (pass, salt) {
-  var bytes = new Buffer(pass || '', 'utf16le');
-  var src = new Buffer(salt || '', 'base64');
-  var dst = new Buffer(src.length + bytes.length);
-  src.copy(dst, 0, 0, src.length);
-  bytes.copy(dst, src.length, 0, bytes.length);
-  return crypto.createHash('sha1').update(dst).digest('base64');
-};
-
+ 
 module.exports = {
   _login: function (req, res) {
     var _username = req.body.user;
     var _pass = req.body.pass;
     findByUsername(_username, function (found, user) {
       if (found) {
-        var _password_hash = password_hash(_pass,user.value.doc.Pass_Salt);
+        var _password_hash = encryption.password_hash(_pass, user.value.doc.Pass_Salt);
         if (user.value.doc.User === _username && user.value.doc.Pass_Hash === _password_hash) {
           var key = user.value.key;
           var obj = {
