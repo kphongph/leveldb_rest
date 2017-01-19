@@ -5,12 +5,9 @@ var util = require('./util');
 const loginTimeOut = 30;
 
 var findByUsername = function (username, cb) {
-  //console.log('\n---getuser function---\n',username);
   util.get_dbs('user_db', function (err, db) {
-    //console.log('\n---database name---\n',db);
     var found = false;
     var _index = db.indexes['user'];
-    //console.log('\n---check index---\n', _index);
     if (_index)
       var stream = _index.createIndexStream({
         "start": [username, null],
@@ -29,14 +26,14 @@ var findByUsername = function (username, cb) {
 }
 
 var findByID = function (id, done) {
-  util.get_dbs('user_db', function (err, user_db) {
+  util.get_dbs('user_db', function (err, db_name) {
     if (err) {
       res.json({
         'ok': false,
         'message': err
       });
     } else {
-      user_db.get(id, function (err, value) {
+      db_name.get(id, function (err, value) {
         if (err) {
           done(null, false);
         } else {
@@ -47,23 +44,26 @@ var findByID = function (id, done) {
   });
 };
 
+var password_hash = function (pass, salt) {
+  var bytes = new Buffer(pass || '', 'utf16le');
+  var src = new Buffer(salt || '', 'base64');
+  var dst = new Buffer(src.length + bytes.length);
+  src.copy(dst, 0, 0, src.length);
+  bytes.copy(dst, src.length, 0, bytes.length);
+  return crypto.createHash('sha1').update(dst).digest('base64');
+};
+
 module.exports = {
   _login: function (req, res) {
     var _username = req.body.user;
     var _pass = req.body.pass;
     findByUsername(_username, function (found, user) {
-      //console.log('\n---found---\n',found,'\n---user---\n',user);    
       if (found) {
-        var pass = crypto.createHmac('sha256', 'inf@rva+')
-          .update(_username + _pass + 'inf@rva+')
-          .digest('hex');
-        //console.log('\n',user.value.doc.User,' : ',user.value.doc.Pass);
-        //console.log('\n',_username,' : ',pass);
-        if (user.value.doc.User === _username && user.value.doc.Pass === pass) {
-          //console.log('\n---found---\n', found, '\n---user---\n', user);
+        var _password_hash = password_hash(_pass,user.value.doc.Pass_Salt);
+        if (user.value.doc.User === _username && user.value.doc.Pass_Hash === _password_hash) {
           var key = user.value.key;
           var obj = {
-            timestamp: new Date(),
+            timestamp: new Date().getTime(),
             key: key
           };
           util.get_dbs('authen_db', function (err, authen_db) {
@@ -74,7 +74,7 @@ module.exports = {
               });
             } else {
               authen_db.put(key, obj, function (err) {
-                //console.log('\n---authen_db---\n', key, ' : ', obj);
+                console.log('\n---authen_db---\n', _username, ' : ', new Date(obj.timestamp));
                 if (err) {
                   res.json({
                     status: false
@@ -141,7 +141,7 @@ module.exports = {
             done(null, false);
           } else {
 
-            var diff = Math.abs(new Date(value.timestamp) - new Date());
+            var diff = Math.abs(new Date(value.timestamp) - new Date().getTime());
             var minutes = Math.floor((diff / 1000) / 60);
 
             if (minutes > loginTimeOut) {

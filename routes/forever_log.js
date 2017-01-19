@@ -14,3 +14,5 @@ router.get('/log/:file', function (req, res) {
     } else res.send(err);
   });
 });
+
+module.exports = router;

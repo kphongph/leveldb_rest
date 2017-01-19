@@ -12,6 +12,7 @@ var service_interface = require('./routes/service_interface');
 var forever_log = require('./routes/forever_log');
 var config = require('./config');
 var login = require('./login');
+var getuser = require('./getuser');
 var ssl = require('./ssl_option');
 
 var PORT = process.env.PORT || config.port;
@@ -57,17 +58,15 @@ var ensureNounVerb = authorization.ensureRequest
   .isPermitted('noun:verb')
 
 app.post('/login', login._login);
-app.post('/logout', login._logout);          
+app.post('/logout', login._logout);
+app.get('/getUser/:key?', getuser._getUser_authen);
 app.use('/forever', forever_log);
-
 /*
 app.use('/api', service_interface);
 */
-
 app.use('/api',passport.authenticate('localapikey', {
   session: true
 }), service_interface);
-
 https.createServer(ssl.options, app).listen(PORT, HOST, null, function() {
   console.log('Server listening on port %d', this.address().port);
 });
