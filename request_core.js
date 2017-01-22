@@ -4,8 +4,9 @@ module.exports = {
   post_request: function (uri, body, cb) {
     request({
       method: 'POST',
+      body: body,
       uri: uri,
-      json: body,
+      json: true,
     }, function (err, httpResponse, data) {
       if (err) {
         cb(err, null);
@@ -17,7 +18,8 @@ module.exports = {
   get_request: function (uri, cb) {
     request({
       method: 'GET',
-      uri: uri
+      uri: uri,
+      json: true
     }, function (err, httpResponse, data) {
       if (err) {
         cb(err, null);

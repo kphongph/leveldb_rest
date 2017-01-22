@@ -1,10 +1,5 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var cors = require('cors');
-var passport = require('passport');
-var LocalStrategy = require('passport-localapikey').Strategy;
-var session = require('express-session');
-var authorization = require('express-authorization');
 var https = require('https');
 var path = require('path');
 var fs = require('fs');
@@ -13,17 +8,14 @@ var azure = require('azure');
 var Readable = require('stream').Readable;
 var request = require('request');
 var config = require('./config');
-var login = require('./login');
 var adminuser = require('./adminuser');
+var hostsummary = require('./hostsummary');
 var ssl = require('./ssl_option');
 
 var PORT = process.env.PORT || 9001;
 var HOST = process.env.HOST || '';
 
 var app = express();
-
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -51,6 +43,8 @@ app.post('/resetpass', adminuser._resetpass);
 app.post('/edituser', adminuser._edituser);
 
 app.post('/changepass', adminuser._changepass);
+app.post('/studentstatus', hostsummary._studentstatus);
+app.post('/dbs/form_record/:id?', hostsummary._formrecord);
 app.post('/upload/:container/:filename?', function (req, res) {
   var apikey = req.query.apikey;
   var uri = 'https://maas.nuqlis.com:9000/api/dbs/user_db/' + apikey + '?apikey=' + apikey;
