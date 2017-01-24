@@ -64,9 +64,19 @@ app.use('/forever', forever_log);
 /*
 app.use('/api', service_interface);
 */
-app.use('/api', passport.authenticate('localapikey', {
-  session: true
-}), service_interface);
+
+var ensureLogin = function(req,res,next) {
+  passport.authenticate('localapikey', function(err,user,info) {
+    if(err) { return next(err); }
+    if(!user) {
+      return res.json({'ok':false,'message':'Authentication Required'});
+    } else {
+      return next();
+    }
+  })(req,res,next);
+};
+
+app.use('/api', ensureLogin, service_interface);
 
 https.createServer(ssl.options, app).listen(PORT, HOST, null, function () {
   console.log('Server listening on port %d', this.address().port);

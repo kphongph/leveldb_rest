@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var https = require('https');
 var path = require('path');
 var fs = require('fs');
+var cors = require('cors');
 var multiparty = require('multiparty');
 var azure = require('azure');
 var Readable = require('stream').Readable;
