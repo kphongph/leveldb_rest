@@ -2,7 +2,7 @@ var level = require('level');
 var stream = require('stream');
 var util = require('./util');
 var encryption = require('./encryption');
-const loginTimeOut = 30;
+const loginTimeOut = 180;
 
 var findByUsername = function (username, cb) {
   util.get_dbs('user_db', function (err, db) {
