@@ -59,7 +59,7 @@ module.exports = {
           res.json(data);
         } else {
           var sendMailObj = {
-            from_email: { email: 'cct.nuteam@gmail.com', name: 'ระบบคัดกรองนักเรียนยากจน' },
+            from_email: { email: 'cct.nuteam@gmail.com', name: 'ระบบสารสนเทศปัจจัยพื้นฐานนักเรียนยากจน' },
             to_email: { email: obj.Email, name: obj.Title + obj.Firstname + ' ' + obj.Lastname },
             subject: 'แจ้งรหัสผ่านใหม่ระบบคัดกรองนักเรียนยากจน',
             content: mailtemplate._resetpassmail(obj.Firstname + ' ' + obj.Lastname, obj.User, passtmp),
