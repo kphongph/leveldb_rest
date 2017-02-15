@@ -27,6 +27,7 @@
     "multiparty": "^4.1.2",
     "node-uuid": "^1.4.7",
     "passport": "^0.3.2",
+    "passport-http-bearer": "^1.0.1",
     "passport-localapikey": "0.0.3",
     "path": "^0.12.7",
     "sendgrid": "^4.7.1"

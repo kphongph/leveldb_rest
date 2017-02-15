@@ -12,6 +12,7 @@ var config = require('./config');
 var adminuser = require('./adminuser');
 var hostsummary = require('./hostsummary');
 var ssl = require('./ssl_option');
+var forever_log = require('./routes/forever_log');
 
 var PORT = process.env.PORT || 9001;
 var HOST = process.env.HOST || '';
@@ -39,6 +40,9 @@ app.get('/servertime', function (req, res) {
   var long_date = new Date().getTime()
   res.send(long_date.toString());
 });
+
+app.get('/forever', forever_log);
+
 app.post('/user', adminuser._user);
 app.post('/resetpass', adminuser._resetpass);
 app.post('/edituser', adminuser._edituser);
