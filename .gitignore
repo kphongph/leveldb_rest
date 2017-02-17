@@ -36,8 +36,8 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 config.js
-databases/*
-z_*
+ssl_option.js
+ssl_certificate/*
 databases_index/*
 tools/*
 views/bower_components/*
