@@ -12,6 +12,7 @@ STATUS_DICT['พักการเรียน'] = 'droped';
 STATUS_DICT['ทำไม่ทัน'] = 'notfinish';
 STATUS_DICT['เสียชีวิต'] = 'die';
 STATUS_DICT['อายุเกิน'] = 'older';
+STATUS_DICT['จบการศึกษา'] = 'grad';
 
 var init_host_summary = function(input, res){
   var url = db_endpoint + 'api/query/obec_students/host_class_room?apikey=' + input.akey;
@@ -45,6 +46,7 @@ var init_host_summary = function(input, res){
         notfinish : input.notfinish,
         die : input.die,
         older : input.older,
+        grad : input.grad ? input.grad : 0,
         areaid : input.area,
         hostid : input.hostid
       };
@@ -62,10 +64,10 @@ var init_host_summary = function(input, res){
 };
 
 var update_host_summary = function(input, res){
-  var uri = db_endpoint + 'api/query/hostsummary/area_host?apikey=' + input.akey ;
+  var uri = db_endpoint + 'api/query/hostsummary/hostid?apikey=' + input.akey ;
   var obj = {
-    start :[ input.area, input.hostid ],
-    end:[ input.area, input.hostid + 'xff' ],
+    start :[ input.hostid ],
+    end:[  input.hostid + 'xff' ],
     limit:-1,
     include_doc:true
   };
@@ -84,6 +86,12 @@ var update_host_summary = function(input, res){
         data[0].value.doc.notfinish += input.notfinish;
         data[0].value.doc.die += input.die;
         data[0].value.doc.older += input.older;
+        if(data[0].value.doc.grad){
+          data[0].value.doc.grad += input.grad;
+        }else{
+          var tmp = 0;
+          data[0].value.doc.grad = (tmp + input.grad);
+        }
         uri = db_endpoint + 'api/dbs/hostsummary/' + data[0].value.key + '?apikey=' + input.akey;
 
         request_core.post_request(uri, data[0].value.doc, function(err, resdata){
@@ -113,6 +121,7 @@ module.exports = {
           notfinish: 0,
           die: 0,
           older: 0,
+          grad: 0,
           changed: false,
           akey: req.body.akey,
           hostid: req.body.hostid,
@@ -161,6 +170,7 @@ module.exports = {
           notfinish: 0,
           die: 0,
           older: 0,
+          grad: 0,
           changed: false,
           akey: req.query.apikey,
           hostid: req.body.hostid,

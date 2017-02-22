@@ -9,12 +9,12 @@ var findByUsername = function (username, cb) {
     var found = false;
     var _index = db.indexes['user'];
     if (_index)
-      var stream = _index.createIndexStream({
-        "start": [username, null],
-        "end": [username, undefined],
-        "limit": 1,
-        "include_doc": true
-      });
+    var stream = _index.createIndexStream({
+      "start": [username, null],
+      "end": [username, undefined],
+      "limit": 1,
+      "include_doc": true
+    });
     stream.on('data', function (data) {
       found = true;
       cb(found, data);
@@ -78,6 +78,11 @@ module.exports = {
                 }
               });
             }
+          });
+        }else{
+          console.log('Not Found');
+          res.json({
+            status: false
           });
         }
       } else {
@@ -152,3 +157,4 @@ module.exports = {
     });
   }
 }
+

@@ -71,11 +71,11 @@ module.exports = {
     var _value = req.body;
     delete _value.apikey;
     if (req.params.id) {
-      util.del(db_name, _key, function(result) {
+    //  util.del(db_name, _key, function(result) {
         util.put(db_name, _key, _value, function(result) {
           res.json(result);
         });
-      });
+    //  });
     } else {
       util.put(db_name, _key, _value, function(result) {
         res.json(result);
