@@ -52,33 +52,40 @@ module.exports = {
       if (found) {
         var _password_hash = encryption.password_hash(_pass, user.value.doc.Pass_Salt);
         if (user.value.doc.User === _username && user.value.doc.Pass_Hash === _password_hash) {
-          var key = user.value.key;
-          var obj = {
-            timestamp: new Date().getTime(),
-            key: key
-          };
-          util.get_dbs('authen_db', function (err, authen_db) {
-            if (err) {
-              res.json({
-                'ok': false,
-                'message': err
-              });
-            } else {
-              authen_db.put(key, obj, function (err) {
-                console.log('---authen_db---\n', _username, ' : ', new Date(obj.timestamp));
-                if (err) {
-                  res.json({
-                    status: false
-                  });
-                } else {
-                  res.json({
-                    status: true,
-                    key: key
-                  });
-                }
-              });
-            }
-          });
+          if( ! user.value.doc.deactive ){
+            var key = user.value.key;
+            var obj = {
+              timestamp: new Date().getTime(),
+              key: key
+            };
+            util.get_dbs('authen_db', function (err, authen_db) {
+              if (err) {
+                res.json({
+                  'ok': false,
+                  'message': err
+                });
+              } else {
+                authen_db.put(key, obj, function (err) {
+                  console.log('---authen_db---\n', _username, ' : ', new Date(obj.timestamp));
+                  if (err) {
+                    res.json({
+                      status: false
+                    });
+                  } else {
+                    res.json({
+                      status: true,
+                      key: key
+                    });
+                  }
+                });
+              }
+            });
+          }else{
+            res.json({
+              status: false,
+              message: 'User deactived'
+            });
+          }
         }else{
           console.log('Not Found');
           res.json({

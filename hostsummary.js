@@ -32,7 +32,7 @@ var init_host_summary = function(input, res){
         if (data[i].value.doc.WelfareId == '09' || data[i].value.doc.welfareId == '09'
         || data[i].value.doc.welfareid == '09')  {
           if (data[i].value.doc.class != null) {
-             totalchild++;
+            totalchild++;
           }
         }
       }
@@ -46,7 +46,7 @@ var init_host_summary = function(input, res){
         notfinish : input.notfinish,
         die : input.die,
         older : input.older,
-        grad : input.grad ? input.grad : 0,
+        grad : input.grad,
         areaid : input.area,
         hostid : input.hostid
       };
@@ -64,43 +64,64 @@ var init_host_summary = function(input, res){
 };
 
 var update_host_summary = function(input, res){
-  var uri = db_endpoint + 'api/query/hostsummary/hostid?apikey=' + input.akey ;
-  var obj = {
+  var get_uri = db_endpoint + 'api/query/hostsummary/hostid?apikey=' + input.akey ;
+  var get_obj = {
     start :[ input.hostid ],
     end:[  input.hostid + 'xff' ],
     limit:-1,
     include_doc:true
   };
+  var post_uri = '';
+  var updatetime = new Date().getTime().toString();
 
-  request_core.post_request(uri, obj, function(err, data){
+  request_core.post_request(get_uri, get_obj, function(err, data){
     if (err) {
-      res.json(data);
+      update_host_summary(input, res);
     }else{
-      if (!data[0] ) {
-        init_host_summary(input, res);
-      }else{
-        data[0].value.doc.screened += input.screened;
-        data[0].value.doc.transfered += input.transfered;
-        data[0].value.doc.noidentity += input.noidentity;
-        data[0].value.doc.droped += input.droped;
-        data[0].value.doc.notfinish += input.notfinish;
-        data[0].value.doc.die += input.die;
-        data[0].value.doc.older += input.older;
-        if(data[0].value.doc.grad){
-          data[0].value.doc.grad += input.grad;
-        }else{
-          var tmp = 0;
-          data[0].value.doc.grad = (tmp + input.grad);
-        }
-        uri = db_endpoint + 'api/dbs/hostsummary/' + data[0].value.key + '?apikey=' + input.akey;
+      if (data.length > 0) {
+        post_uri = db_endpoint + 'api/dbs/hostsummary/' + data[0].value.key + '?apikey=' + input.akey ;
+        data[0].value.doc.updatetime = updatetime;
 
-        request_core.post_request(uri, data[0].value.doc, function(err, resdata){
-          if (err) {
-            res.json(resdata);
+        request_core.post_request(post_uri, data[0].value.doc, function(err2, data2){
+          if (err2) {
+            update_host_summary(input, res);
           }else{
-            res.json(resdata);
+            request_core.post_request(get_uri, get_obj, function(err3, data3){
+              if (err3) {
+                update_host_summary(input, res);
+              }else{
+                if(data3.length > 0){
+                  if(data3[0].value.doc.updatetime === updatetime){
+                    data3[0].value.doc.screened += input.screened;
+                    data3[0].value.doc.transfered += input.transfered;
+                    data3[0].value.doc.noidentity += input.noidentity;
+                    data3[0].value.doc.droped += input.droped;
+                    data3[0].value.doc.notfinish += input.notfinish;
+                    data3[0].value.doc.die += input.die;
+                    data3[0].value.doc.older += input.older;
+                    data3[0].value.doc.grad += input.grad;
+
+                    request_core.post_request(post_uri, data3[0].value.doc, function(errres, resdata){
+                      if (errres) {
+                        res.json(resdata);
+                      }else{
+                        res.json(resdata);
+                      }
+                    });
+                  }else{
+                    setTimeout(function() {
+                      update_host_summary(input, res);
+                    }, Math.floor(Math.random() * (500 - 50) + 50));
+                  }
+                }else{
+                  res.json(data3);
+                }
+              }
+            });
           }
         });
+      }else{
+        init_host_summary(input, res);
       }
     }
   });
