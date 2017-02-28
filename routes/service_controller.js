@@ -5,37 +5,51 @@ var util = require('../util');
 module.exports = {
 	_log: function(req, res) {
     var db_name = req.params.db;
-    util.get_dbs(db_name, function(err, db) {
-      if (err) {
-        res.json({
-          'ok': false,
-          'message': err
-        });
-      } else {
-        if (db.createLogStream) {
-        db.createLogStream(req.query)
-          .pipe(JSONStream.stringify())
-          .pipe(res);
+    if(db_name == 'attendance'){
+      util.get_dbs(db_name, function(err, db) {
+        if (err) {
+          res.json({
+            'ok': false,
+            'message': err
+          });
+        } else {
+          if (db.createLogStream) {
+          db.createLogStream(req.query)
+            .pipe(JSONStream.stringify())
+            .pipe(res);
+          }
         }
-      }
-    });
+      });
+    }else{
+      res.json({
+        'ok': false,
+        'message': 'This Database is not Support leveldb-log'
+      });
+    }
   },
   _compact: function(req, res) {
     var db_name = req.params.db;
-    util.get_dbs(db_name, function(err, db) {
-      if (err) {
-        res.json({
-          'ok': false,
-          'message': err
-        });
-      } else {
-        if(db.compactLog) {
-          db.compactLog(req.query,function(err,compact) {
-            res.json({'ok':true,'compacted':compact});
+    if(db_name == 'attendance'){
+      util.get_dbs(db_name, function(err, db) {
+        if (err) {
+          res.json({
+            'ok': false,
+            'message': err
           });
+        } else {
+          if(db.compactLog) {
+            db.compactLog(req.query,function(err,compact) {
+              res.json({'ok':true,'compacted':compact});
+            });
+          }
         }
-      }
-    });
+      });
+    }else{
+      res.json({
+        'ok': false,
+        'message': 'This Database is not Support leveldb-log'
+      });
+    }
   },
   _query: function(req, res) {
     var db_name = req.params.db;

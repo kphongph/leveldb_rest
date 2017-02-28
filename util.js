@@ -21,8 +21,13 @@ var get_dbs = function(name, options, cb) {
       options['valueEncoding'] = 'utf8';
     }
     var db = sublevel(levelup(config.db_path + '/' + name, options));
-    db = levelindex(levellog(db));
-
+    //--------------------------------
+    if(name == 'attendance'){
+      db = levelindex(levellog(db));
+    }else{
+      db = levelindex(db);
+    }
+    //--------------------------------
     if(config.index[name]) {
       config.index[name].attributes.forEach(function(attr) {
         db.ensureIndex(attr.name,attr.map,function() {
