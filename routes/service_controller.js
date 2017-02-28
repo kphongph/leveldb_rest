@@ -3,7 +3,7 @@ var JSONStream = require('JSONStream');
 var util = require('../util');
 
 module.exports = {
-	_log: function(req, res) {
+   _log: function(req, res) {
     var db_name = req.params.db;
     if(db_name == 'attendance'){
       util.get_dbs(db_name, function(err, db) {
@@ -17,6 +17,11 @@ module.exports = {
           db.createLogStream(req.query)
             .pipe(JSONStream.stringify())
             .pipe(res);
+          } else {
+           res.json({
+            'ok': false,
+            'message': 'This Database is not Support leveldb-log'
+           });
           }
         }
       });
