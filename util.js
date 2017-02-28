@@ -2,6 +2,8 @@ var levelup = require('levelup');
 var config = require('./config');
 var fs = require('fs');
 var levelindex = require('leveldb-index');
+var levellog = require('leveldb-log');
+var sublevel = require('level-sublevel');
 
 var dbs = {};
 
@@ -18,15 +20,16 @@ var get_dbs = function(name, options, cb) {
     if (re.test(name)) {
       options['valueEncoding'] = 'utf8';
     }
-    var db = levelup(config.db_path + '/' + name, options); 
-    db = levelindex(db);
+    var db = sublevel(levelup(config.db_path + '/' + name, options));
+    db = levelindex(levellog(db));
+
     if(config.index[name]) {
       config.index[name].attributes.forEach(function(attr) {
         db.ensureIndex(attr.name,attr.map,function() {
           console.log(attr.name+' indexing complete');
         });
       });
-    } 
+    }
     dbs[name] = {
      'db': db
     };

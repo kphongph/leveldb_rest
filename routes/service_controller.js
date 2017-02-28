@@ -3,6 +3,40 @@ var JSONStream = require('JSONStream');
 var util = require('../util');
 
 module.exports = {
+	_log: function(req, res) {
+    var db_name = req.params.db;
+    util.get_dbs(db_name, function(err, db) {
+      if (err) {
+        res.json({
+          'ok': false,
+          'message': err
+        });
+      } else {
+        if (db.createLogStream) {
+        db.createLogStream(req.query)
+          .pipe(JSONStream.stringify())
+          .pipe(res);
+        }
+      }
+    });
+  },
+  _compact: function(req, res) {
+    var db_name = req.params.db;
+    util.get_dbs(db_name, function(err, db) {
+      if (err) {
+        res.json({
+          'ok': false,
+          'message': err
+        });
+      } else {
+        if(db.compactLog) {
+          db.compactLog(req.query,function(err,compact) {
+            res.json({'ok':true,'compacted':compact});
+          });
+        }
+      }
+    });
+  },
   _query: function(req, res) {
     var db_name = req.params.db;
     var index = req.params.index;

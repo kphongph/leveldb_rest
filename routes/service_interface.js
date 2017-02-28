@@ -6,6 +6,9 @@ var list_indexs = require('./list_indexs');
 //GET METHOD
 router.get('/dbs', controller._listdbs);
 router.get('/dbs/:dbs/:id?', controller._getdata);
+router.get('/log/:db', controller._log);
+router.get('/compactlog/:db', controller._compact);
+
 router.use('/index', list_indexs);
 
 //PUT METHOD
