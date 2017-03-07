@@ -118,8 +118,8 @@ var ensureLogin = function(req,res,next) {
 };
 
 app.use('/api', ensureLogin, service_interface);
-
 app.use('/apis', ensureLogin_token, service_interface);
+app.use('/views', require('./routes/views'));
 
 https.createServer(ssl.options, app).listen(PORT, HOST, null, function () {
   console.log('Server listening on port %d', this.address().port);

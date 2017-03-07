@@ -5,7 +5,7 @@ var util = require('../util');
 module.exports = {
    _log: function(req, res) {
     var db_name = req.params.db;
-    if(db_name == 'attendance'){
+    if(db_name == 'attendance'||db_name == 'newindicator'){
       util.get_dbs(db_name, function(err, db) {
         if (err) {
           res.json({
@@ -34,7 +34,7 @@ module.exports = {
   },
   _compact: function(req, res) {
     var db_name = req.params.db;
-    if(db_name == 'attendance'){
+    if(db_name == 'attendance'||db_name == 'newindicator'){
       util.get_dbs(db_name, function(err, db) {
         if (err) {
           res.json({

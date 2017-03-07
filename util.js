@@ -22,7 +22,7 @@ var get_dbs = function(name, options, cb) {
     }
     var db = sublevel(levelup(config.db_path + '/' + name, options));
     //--------------------------------
-    if(name == 'attendance'){
+    if(name == 'attendance'||name == 'newindicator'){
       db = levelindex(levellog(db));
     }else{
       db = levelindex(db);
