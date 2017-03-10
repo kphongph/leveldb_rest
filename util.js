@@ -40,7 +40,17 @@ var get_dbs = function(name, options, cb) {
     };
     cb(null, db);
   } else {
-    cb(null, dbs[name].db);
+    if(dbs[name].db.isOpen()) {
+      cb(null, dbs[name].db);
+    } else {
+      dbs[name].db.open(function(err) {
+        if(!err) {
+          cb(null,dbs[name].db);
+        } else {
+          cb(err,null);
+        }
+      });
+    }
   }
 };
 
