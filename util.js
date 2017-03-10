@@ -20,7 +20,7 @@ var get_dbs = function(name, options, cb) {
     };
   }
 
-  if (!dbs[name]) {
+  if(!dbs[name] || dbs[name].db.isClosed()) {
     var re = /_index$/;
     if (re.test(name)) {
       options['valueEncoding'] = 'utf8';
@@ -32,13 +32,13 @@ var get_dbs = function(name, options, cb) {
     }else{
       db = levelindex(db);
     }
-    //--------------------------------
     
     dbs[name] = {'indexing':0};
-    
+     
     if(config.index[name]) {
       config.index[name].attributes.forEach(function(attr) {
         dbs[name].indexing++;
+        console.log(dbs[name].indexing);
         db.ensureIndex(attr.name,attr.map,function() {
           dbs[name].indexing--;
           console.log(attr.name+' indexing complete');
@@ -48,17 +48,17 @@ var get_dbs = function(name, options, cb) {
     dbs[name]['db'] = db;    
     cb(null, db);
   } else {
-    if(dbs[name].db.isOpen()) {
+    //if(dbs[name].db.isOpen()) {
       cb(null, dbs[name].db);
-    } else {
-      dbs[name].db.open(function(err) {
-        if(!err) {
-          cb(null,dbs[name].db);
-        } else {
-          cb(err,null);
-        }
-      });
-    }
+    //} else {
+    //  dbs[name].db.open(function(err) {
+    //    if(!err) {
+    //      cb(null,dbs[name].db);
+    //    } else {
+    //      cb(err,null);
+    //    }
+    //  });
+    //}
   }
 };
 
