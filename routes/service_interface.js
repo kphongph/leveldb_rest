@@ -8,6 +8,7 @@ router.get('/dbs', controller._listdbs);
 router.get('/dbs/:dbs/:id?', controller._getdata);
 router.get('/log/:db', controller._log);
 router.get('/compactlog/:db', controller._compact);
+router.get('/close/:db', controller._closedb);
 
 router.use('/index', list_indexs);
 
