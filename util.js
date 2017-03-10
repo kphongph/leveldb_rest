@@ -8,7 +8,6 @@ var sublevel = require('level-sublevel');
 var dbs = {};
 
 var isIndexing = function(name) {
-  console.log('T1',dbs[name].indexing);
   if(dbs[name].indexing > 0) return true;
   return false;
 }
@@ -45,8 +44,7 @@ var get_dbs = function(name, options, cb) {
           console.log(attr.name+' indexing complete');
         });
       });
-    }
-    console.log('T2',dbs[name].indexing);    
+    }   
     dbs[name]['db'] = db;
     cb(null, db);
   } else {
