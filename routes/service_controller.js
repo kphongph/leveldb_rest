@@ -5,9 +5,10 @@ var util = require('../util');
 module.exports = {
   _closedb: function(req, res){
     var db_name = req.params.db;
-    if(!util.isIndexing(db_name)) { 
-      util.get_dbs(db_name,function(err,db) {
-        db.close(function(err) { 
+    util.get_dbs(db_name,function(err,db) {
+      if(!util.isIndexing(db_name)) {
+        db.close(function(err) {
+          console.log(db_name+' is closed : ',db.isClosed());
           if(!err) {
             res.json({
               'ok':true
@@ -19,13 +20,13 @@ module.exports = {
             });
           }
         });
-      });
-    }else {
-      res.json({
-        'ok':false,
-        message:'indexing'
-      });
-    }
+      }else {
+        res.json({
+          'ok':false,
+          message:'indexing'
+        });
+      }
+    });
   },
   _log: function(req, res) {
     var db_name = req.params.db;
@@ -100,7 +101,6 @@ module.exports = {
     var db_name = req.params.dbs;
     var key = req.params.id ? req.params.id : '';
     util.get_dbs(db_name, function(err, db) {
-      console.log(db.isClosed());
       if (err) {
         res.json({
           'ok': false,
