@@ -28,4 +28,14 @@ router.post('/attendance/student', function(req, res) {
   redirect('POST',url,req,res);
 });
 
+router.post('/indicator/gpa', function(req, res) {
+  var url = 'http://45.76.176.189:3000/api/query/student_GPA';
+module.exports = router;
+  redirect('POST',url,req,res);
+});
+router.post('/indicator/gpax', function(req, res) {
+  var url = 'http://45.76.176.189:3000/api/query/student_GPAX';
+  redirect('POST',url,req,res);
+});
+
 module.exports = router;
