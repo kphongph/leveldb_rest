@@ -66,7 +66,7 @@ module.exports = {
                 });
               } else {
                 authen_db.put(key, obj, function (err) {
-                  console.log('---authen_db---\n', _username, ' : ', new Date(obj.timestamp));
+                  console.log({'username':_username,message:'Authenthicated','last_login':new Date(obj.timestamp)});
                   if (err) {
                     res.json({
                       status: false
@@ -81,21 +81,24 @@ module.exports = {
               }
             });
           }else{
+            console.log({'username':_username,message:'Username Deactived'});
             res.json({
               status: false,
-              message: 'User deactived'
+              message: 'Username Deactived'
             });
           }
         }else{
-          console.log('Not Found');
+          console.log({'username':_username,message:'Invalid Username or Password'});
           res.json({
-            status: false
+            status: false,
+            message:'Invalid Username or Password'
           });
         }
       } else {
-        console.log('Not Found');
+        console.log({'username':_username,message:'Username is Not Found'});
         res.json({
-          status: false
+          status: false,
+          message:'Username is Not Found'
         });
       }
     });
@@ -164,4 +167,3 @@ module.exports = {
     });
   }
 }
-
