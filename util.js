@@ -7,6 +7,11 @@ var sublevel = require('level-sublevel');
 
 var dbs = {};
 
+var isIndexing = function(name) {
+  if(dbs[name].indexing > 0) return true;
+  return false;
+}
+
 var get_dbs = function(name, options, cb) {
   if (typeof cb === 'undefined') {
     cb = options;
@@ -28,16 +33,19 @@ var get_dbs = function(name, options, cb) {
       db = levelindex(db);
     }
     //--------------------------------
+    
+    dbs[name] = {'indexing':0};
+    
     if(config.index[name]) {
       config.index[name].attributes.forEach(function(attr) {
+        dbs[name].indexing++;
         db.ensureIndex(attr.name,attr.map,function() {
+          dbs[name].indexing--;
           console.log(attr.name+' indexing complete');
         });
       });
     }
-    dbs[name] = {
-     'db': db
-    };
+    dbs[name]['db'] = db;    
     cb(null, db);
   } else {
     if(dbs[name].db.isOpen()) {
@@ -177,3 +185,4 @@ module.exports.del = del;
 module.exports.deldb = deldb;
 module.exports.create_db = create_db;
 module.exports.list_db = list_db;
+module.exports.isIndexing = isIndexing;
