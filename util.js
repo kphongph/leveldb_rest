@@ -38,7 +38,6 @@ var get_dbs = function(name, options, cb) {
     if(config.index[name]) {
       config.index[name].attributes.forEach(function(attr) {
         dbs[name].indexing++;
-        console.log(dbs[name].indexing);
         db.ensureIndex(attr.name,attr.map,function() {
           dbs[name].indexing--;
           console.log(attr.name+' indexing complete');
