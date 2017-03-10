@@ -8,11 +8,13 @@ var sublevel = require('level-sublevel');
 var dbs = {};
 
 var isIndexing = function(name) {
+  console.log('T1',dbs[name].indexing);
   if(dbs[name].indexing > 0) return true;
   return false;
 }
 
 var get_dbs = function(name, options, cb) {
+  
   if (typeof cb === 'undefined') {
     cb = options;
     options = {
@@ -20,21 +22,21 @@ var get_dbs = function(name, options, cb) {
     };
   }
 
-  if(!dbs[name] || dbs[name].db.isClosed()) {
+  if (!dbs[name] || dbs[name].db.isClosed()) {
     var re = /_index$/;
     if (re.test(name)) {
       options['valueEncoding'] = 'utf8';
     }
-    var db = sublevel(levelup(config.db_path + '/' + name, options));
-    //--------------------------------
+    var db = sublevel(levelup(config.db_path + '/' + name, options));       
+    
     if(name == 'attendance'||name == 'newindicator'){
       db = levelindex(levellog(db));
     }else{
       db = levelindex(db);
-    }
+    }    
     
     dbs[name] = {'indexing':0};
-     
+    
     if(config.index[name]) {
       config.index[name].attributes.forEach(function(attr) {
         dbs[name].indexing++;
@@ -44,20 +46,11 @@ var get_dbs = function(name, options, cb) {
         });
       });
     }
-    dbs[name]['db'] = db;    
+    console.log('T2',dbs[name].indexing);    
+    dbs[name]['db'] = db;
     cb(null, db);
   } else {
-    //if(dbs[name].db.isOpen()) {
-      cb(null, dbs[name].db);
-    //} else {
-    //  dbs[name].db.open(function(err) {
-    //    if(!err) {
-    //      cb(null,dbs[name].db);
-    //    } else {
-    //      cb(err,null);
-    //    }
-    //  });
-    //}
+    cb(null, dbs[name].db);
   }
 };
 
