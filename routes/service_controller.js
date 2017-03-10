@@ -3,7 +3,31 @@ var JSONStream = require('JSONStream');
 var util = require('../util');
 
 module.exports = {
-   _log: function(req, res) {
+  _closedb: function(req, res){
+    var db_name = req.params.db;
+    if(!util.isIndexing(db_name)) { 
+      util.get_dbs(db_name,function(err,db) {
+        db.close(function(err) { 
+          if(!err) {
+            res.json({
+              'ok':true
+            });
+          } else {
+            res.json({
+              'ok':false,
+              message:err
+            });
+          }
+        });
+      });
+    }else {
+      res.json({
+        'ok':false,
+        message:'indexing'
+      });
+    }
+  },
+  _log: function(req, res) {
     var db_name = req.params.db;
     if(db_name == 'attendance'||db_name == 'newindicator'){
       util.get_dbs(db_name, function(err, db) {
