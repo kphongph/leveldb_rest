@@ -41,7 +41,7 @@ var get_dbs = function(name, options, cb) {
         dbs[name].indexing++;
         db.ensureIndex(attr.name,attr.map,function() {
           dbs[name].indexing--;
-          console.log(attr.name+' indexing complete');
+          console.log({'database':name,'views':attr.name,'message':'indexing complete'});
         });
       });
     }   
