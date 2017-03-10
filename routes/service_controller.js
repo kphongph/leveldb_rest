@@ -8,10 +8,11 @@ module.exports = {
     util.get_dbs(db_name,function(err,db) {
       if(!util.isIndexing(db_name)) {
         db.close(function(err) {
-          console.log(db_name+' is closed : ',db.isClosed());
+          console.log({'database':db_name,'message':'database is closed'});
           if(!err) {
             res.json({
-              'ok':true
+              'ok':true,
+              message:db_name+' is closed'
             });
           } else {
             res.json({
@@ -23,7 +24,7 @@ module.exports = {
       }else {
         res.json({
           'ok':false,
-          message:'indexing'
+          message:db_name+' is indexing'
         });
       }
     });
