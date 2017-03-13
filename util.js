@@ -7,7 +7,13 @@ var sublevel = require('level-sublevel');
 
 var dbs = {};
 
+var isIndexing = function(name) {
+  if(dbs[name].indexing > 0) return true;
+  return false;
+}
+
 var get_dbs = function(name, options, cb) {
+  
   if (typeof cb === 'undefined') {
     cb = options;
     options = {
@@ -15,29 +21,31 @@ var get_dbs = function(name, options, cb) {
     };
   }
 
-  if (!dbs[name]) {
+  if (!dbs[name] || dbs[name].db.isClosed()) {
     var re = /_index$/;
     if (re.test(name)) {
       options['valueEncoding'] = 'utf8';
     }
-    var db = sublevel(levelup(config.db_path + '/' + name, options));
-    //--------------------------------
+    var db = sublevel(levelup(config.db_path + '/' + name, options));       
+    
     if(name == 'attendance'||name == 'newindicator'){
       db = levelindex(levellog(db));
     }else{
       db = levelindex(db);
-    }
-    //--------------------------------
+    }    
+    
+    dbs[name] = {'indexing':0};
+    
     if(config.index[name]) {
       config.index[name].attributes.forEach(function(attr) {
+        dbs[name].indexing++;
         db.ensureIndex(attr.name,attr.map,function() {
-          console.log(attr.name+' indexing complete');
+          dbs[name].indexing--;
+          console.log({'database':name,'views':attr.name,'message':'indexing complete'});
         });
       });
-    }
-    dbs[name] = {
-     'db': db
-    };
+    }   
+    dbs[name]['db'] = db;
     cb(null, db);
   } else {
     cb(null, dbs[name].db);
@@ -167,3 +175,4 @@ module.exports.del = del;
 module.exports.deldb = deldb;
 module.exports.create_db = create_db;
 module.exports.list_db = list_db;
+module.exports.isIndexing = isIndexing;
