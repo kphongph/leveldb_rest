@@ -1,5 +1,6 @@
 var uuid = require('node-uuid');
 var JSONStream = require('JSONStream');
+var listdb2log = require('../listdb2log');
 var util = require('../util');
 
 module.exports = {
@@ -31,7 +32,8 @@ module.exports = {
   },
   _log: function(req, res) {
     var db_name = req.params.db;
-    if(db_name == 'attendance'||db_name == 'newindicator'){
+     console.log('control 1 check db log',listdb2log.isdb_log(db_name));
+    if(listdb2log.isdb_log(db_name)){
       util.get_dbs(db_name, function(err, db) {
         if (err) {
           res.json({
@@ -60,7 +62,8 @@ module.exports = {
   },
   _compact: function(req, res) {
     var db_name = req.params.db;
-    if(db_name == 'attendance'||db_name == 'newindicator'){
+     console.log('control 2 check db log',listdb2log.isdb_log(db_name));
+    if(listdb2log.isdb_log(db_name)){
       util.get_dbs(db_name, function(err, db) {
         if (err) {
           res.json({

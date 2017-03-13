@@ -5,6 +5,8 @@ var levelindex = require('leveldb-index');
 var levellog = require('leveldb-log');
 var sublevel = require('level-sublevel');
 
+var listdb2log = require('./listdb2log');
+
 var dbs = {};
 
 var isIndexing = function(name) {
@@ -28,7 +30,9 @@ var get_dbs = function(name, options, cb) {
     }
     var db = sublevel(levelup(config.db_path + '/' + name, options));       
     
-    if(name == 'attendance'||name == 'newindicator'){
+    console.log('util check db log',listdb2log.isdb_log(name));
+    
+    if(listdb2log.isdb_log(name)){
       db = levelindex(levellog(db));
     }else{
       db = levelindex(db);
