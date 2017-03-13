@@ -32,7 +32,6 @@ module.exports = {
   },
   _log: function(req, res) {
     var db_name = req.params.db;
-     console.log('control 1 check db log',listdb2log.isdb_log(db_name));
     if(listdb2log.isdb_log(db_name)){
       util.get_dbs(db_name, function(err, db) {
         if (err) {
@@ -62,7 +61,6 @@ module.exports = {
   },
   _compact: function(req, res) {
     var db_name = req.params.db;
-     console.log('control 2 check db log',listdb2log.isdb_log(db_name));
     if(listdb2log.isdb_log(db_name)){
       util.get_dbs(db_name, function(err, db) {
         if (err) {

@@ -28,9 +28,7 @@ var get_dbs = function(name, options, cb) {
     if (re.test(name)) {
       options['valueEncoding'] = 'utf8';
     }
-    var db = sublevel(levelup(config.db_path + '/' + name, options));       
-    
-    console.log('util check db log',listdb2log.isdb_log(name));
+    var db = sublevel(levelup(config.db_path + '/' + name, options));           
     
     if(listdb2log.isdb_log(name)){
       db = levelindex(levellog(db));
