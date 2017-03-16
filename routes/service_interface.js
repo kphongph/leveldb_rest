@@ -27,15 +27,15 @@ var pipe_request = function(method,url,req,res) {
   } else {
       request({
       method:method,
-      url:url, 
-    }).pipe(res); 
+      url:url,
+    }).pipe(res);
   }
 }
 
-router.param('db',function(req,res,next,db) {  
+router.param('db',function(req,res,next,db) {
   var list_db_proxy = ['test','attendance','newindicator'];
   var server_proxy = 'http://localhost:44300';
-  if(list_db_proxy.indexOf(req.params.db) != -1) {       
+  if(list_db_proxy.indexOf(req.params.db) != -1) {
     var db_url= server_proxy+req.url;
     pipe_request(req.method,db_url,req,res);
   } else {
@@ -46,14 +46,14 @@ router.param('db',function(req,res,next,db) {
 router.use('/index', list_indexs);
 
 //GET METHOD
-router.get('/db', controller._listdbs);
+router.get('/dbs', controller._listdbs);
 router.get('/dbs/:db/:id?', controller._getdata);
 router.get('/log/:db', controller._log);
 router.get('/compactlog/:db', controller._compact);
 router.get('/close/:db', controller._closedb);
 
 //PUT METHOD
-router.put('/dbs/:db', controller._createdb);
+router.put('/dbs/:dbs', controller._createdb);
 
 //POST METHOD
 router.post('/dbs/:db/:id?', controller._putdata);
