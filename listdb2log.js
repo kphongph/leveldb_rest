@@ -1,6 +1,7 @@
 var list_db_log = [
   "form_record",
-  "obec_students"];
+  "obec_students"
+  ];
 
 module.exports = {
   isdb_log : function(db_name) {

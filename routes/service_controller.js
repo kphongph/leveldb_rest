@@ -100,7 +100,7 @@ module.exports = {
     });
   },
   _getdata: function(req, res) {
-    var db_name = req.params.dbs;
+    var db_name = req.params.db;
     var key = req.params.id ? req.params.id : '';
     util.get_dbs(db_name, function(err, db) {
       if (err) {
@@ -145,7 +145,7 @@ module.exports = {
     });
   },
   _putdata: function(req, res) {
-    var db_name = req.params.dbs;
+    var db_name = req.params.db;
     var _key = req.params.id ? req.params.id : uuid.v1();
     var _key = _key.replace(/-/g, '');
     var _value = req.body;
@@ -163,7 +163,7 @@ module.exports = {
     }
   },
   _daletedata: function(req, res) {
-    var db_name = req.params.dbs;
+    var db_name = req.params.db;
     var _key = req.params.id;
 
     util.del(db_name, _key, function(result) {
@@ -171,7 +171,7 @@ module.exports = {
     });
   },
   _daletedb: function(req, res) {
-    var db_name = req.params.dbs;
+    var db_name = req.params.db;
 
     util.deldb(db_name, function(result) {
       res.json(result);
@@ -183,7 +183,7 @@ module.exports = {
     });
   },
   _createdb: function(req, res) {
-    var db_name = req.params.dbs;
+    var db_name = req.params.db;
     var options = req.body;
     util.create_db(db_name, options, function(result) {
       res.json(result);
