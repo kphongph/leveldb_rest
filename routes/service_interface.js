@@ -33,7 +33,7 @@ var pipe_request = function(method,url,req,res) {
 }
 
 router.param('db',function(req,res,next,db) {
-  var list_db_proxy = ['test','attendance','newindicator'];
+  var list_db_proxy = ['attendance','newindicator'];
   var server_proxy = 'http://localhost:44300';
   if(list_db_proxy.indexOf(req.params.db) != -1) {
     var db_url= server_proxy+req.url;
