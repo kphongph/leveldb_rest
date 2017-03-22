@@ -30,6 +30,7 @@
     "passport": "^0.3.2",
     "passport-http-bearer": "^1.0.1",
     "passport-localapikey": "0.0.3",
+    "passport-jwt": "^2.2.1",
     "path": "^0.12.7",
     "sendgrid": "^4.7.1"
   }

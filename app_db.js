@@ -4,12 +4,12 @@ var cors = require('cors');
 var passport = require('passport');
 var LocalStrategy = require('passport-localapikey').Strategy;
 var BearerStrategy = require('passport-http-bearer').Strategy;
+var JwtStrategy = require('passport-jwt').Strategy;
+var ExtractJwt = require('passport-jwt').ExtractJwt;
 var session = require('express-session');
 var authorization = require('express-authorization');
 var path = require('path');
 var https = require('https');
-
-
 
 var service_interface = require('./routes/service_interface');
 var config = require('./config');
@@ -43,6 +43,7 @@ var pConf =  {
     protocol: "https",
     host: "maas.nuqlis.com:9002",
   };
+
 passport.use(new BearerStrategy(
   function(token, done) {
     console.log(token);
@@ -64,6 +65,14 @@ passport.use(new BearerStrategy(
     request(options, callback);
 }
 ));
+
+var jwtOptions = {}
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeader();
+jwtOptions.secretOrKey = ssl.options.cert;
+
+passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, done) {
+  done(null, jwt_payload);
+}));
 
 passport.serializeUser(function (user, done) {
   done(null, user.id);
@@ -89,22 +98,8 @@ app.post('/login', login._login);
 app.post('/logout', login._logout);
 app.get('/getUser/:key?', getuser._getUser_authen);
 
-var ensureLogin_token = function (req, res, next) {
-  passport.authenticate('bearer', function(err,user,info) {
-    if(err) { return next(err); }
-    if(!user) {
-      return res.json({
-        'ok':false,
-        'message':'Authentication Required'
-      });
-    } else {
-      return next();
-    }
-  })(req,res,next);
-}
-
 var ensureLogin = function(req,res,next) {
-  passport.authenticate('localapikey', function(err,user,info) {
+  passport.authenticate(['localapikey','bearer','jwt'], function(err,user,info) {
     if(err) { return next(err); }
     if(!user) {
       return res.json({
@@ -118,7 +113,7 @@ var ensureLogin = function(req,res,next) {
 };
 
 app.use('/api', ensureLogin, service_interface);
-app.use('/apis', ensureLogin_token, service_interface);
+app.use('/apis', ensureLogin, service_interface);
 app.use('/views', require('./routes/views'));
 
 https.createServer(ssl.options, app).listen(PORT, HOST, null, function () {
