@@ -4,6 +4,7 @@ var fs = require('fs');
 var levelindex = require('leveldb-index');
 var levellog = require('leveldb-log');
 var sublevel = require('level-sublevel');
+var locks = require('locks');
 
 var listdb2log = require('./listdb2log');
 
@@ -13,6 +14,8 @@ var isIndexing = function(name) {
   if(dbs[name].indexing > 0) return true;
   return false;
 }
+
+var rwlock = locks.createReadWriteLock();
 
 var get_dbs = function(name, options, cb) {
   
@@ -24,33 +27,50 @@ var get_dbs = function(name, options, cb) {
   }
 
   if (!dbs[name] || dbs[name].db.isClosed()) {
-    var re = /_index$/;
-    if (re.test(name)) {
-      options['valueEncoding'] = 'utf8';
-    }
-    var db = sublevel(levelup(config.db_path + '/' + name, options));           
+    console.log('open');
+    rwlock.timedReadLock(5000,function(err) {
+      var re = /_index$/;
+      if (re.test(name)) {
+        options['valueEncoding'] = 'utf8';
+      }
+      var db = sublevel(levelup(config.db_path + '/' + name, options));          
     
-    if(listdb2log.isdb_log(name)){
-      db = levelindex(levellog(db));
-    }else{
-      db = levelindex(db);
-    }    
+      if(listdb2log.isdb_log(name)){
+        db = levelindex(levellog(db));
+      } else{
+        db = levelindex(db);
+      }    
     
-    dbs[name] = {'indexing':0};
+      dbs[name] = {'indexing':0,'connection':0};
     
-    if(config.index[name]) {
-      config.index[name].attributes.forEach(function(attr) {
-        dbs[name].indexing++;
-        db.ensureIndex(attr.name,attr.map,function() {
-          dbs[name].indexing--;
-          console.log({'database':name,'views':attr.name,'message':'indexing complete'});
+      if(config.index[name]) {
+        config.index[name].attributes.forEach(function(attr) {
+          dbs[name].indexing++;
+          db.ensureIndex(attr.name,attr.map,function() {
+            dbs[name].indexing--;
+          //  console.log({'database':name,'views':attr.name,'message':'indexing complete'});
+          });
+        });
+      }   
+      dbs[name]['db'] = db;
+      cb(null, db);
+      rwlock.unlock();
+    });
+  } else {
+    dbs[name].connection++;
+    var self = this;
+    var max_reuse = 50;
+    if(dbs[name].connection > max_reuse) {
+      rwlock.writeLock(function() {
+        dbs[name].db.close(function(err) {
+          self.get_dbs(name,cb);
+          rwlock.unlock();
         });
       });
-    }   
-    dbs[name]['db'] = db;
-    cb(null, db);
-  } else {
-    cb(null, dbs[name].db);
+    } else {
+      console.log('reuse');
+      cb(null, dbs[name].db);
+    }
   }
 };
 

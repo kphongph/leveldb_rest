@@ -94,11 +94,11 @@ module.exports = {
         });
       } else {
         db.indexes[index].createIndexStream(req.body)
-          .on('end',function() {
-           db.close(function(err) {
-              if(err) console.log(err);
-            });
-          })
+          //.on('end',function() {
+          // db.close(function(err) {
+           //  if(err) console.log(err);
+          // });
+         // })
           .pipe(JSONStream.stringify())
           .pipe(res);
       }
