@@ -59,7 +59,7 @@ var get_dbs = function(name, options, cb) {
   } else {
     dbs[name].connection++;
     var self = this;
-    var max_reuse = 50;
+    var max_reuse = 10;
     if(dbs[name].connection > max_reuse) {
       rwlock.writeLock(function() {
         dbs[name].db.close(function(err) {
@@ -68,8 +68,11 @@ var get_dbs = function(name, options, cb) {
         });
       });
     } else {
-      console.log('reuse');
-      cb(null, dbs[name].db);
+      rwlock.timedReadLock(5000,function(err) {
+        console.log('reuse');
+        cb(null, dbs[name].db);
+        rwlock.unlock();
+      });
     }
   }
 };
