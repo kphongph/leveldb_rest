@@ -1,0 +1,262 @@
+module.exports.index = {
+  'obec_students': {
+    attributes: [{
+      'name': 'host_class_room',
+      'map': function(key, value, emit) {
+        emit([value.hostid, value['class'], value['room']]);
+      }
+    }]
+  },
+  'educationchild': {
+    attributes: [{
+        'name': 'cid',
+        'map': function(key, value, emit) {
+          emit(value.CID);
+        }
+      },
+      {
+        'name': 'host_class_room',
+        'map': function(key, value, emit) {
+          if(value) {
+            emit([value.HostID, value.EducationClassID, value.Room]);
+          }
+        }
+      },
+      {
+        'name': 'host_cid',
+        'map': function(key, value, emit) {
+          if(value) {
+            emit([value.HostID, value.CID]);
+          }
+        }
+      },
+    ]
+  },
+  'edu_student': {
+    attributes: [{
+      'name': 'cid',
+      'map': function(key, value, emit) {
+        emit([value.CID]);
+      }
+    }]
+  },
+  'course': {
+    attributes: [{
+      'name': 'schooltimeid',
+      'map': function(key, value, emit) {
+        emit([value.SchoolTimeID]);
+      }
+    }, {
+      'name': 'host_year_semester',
+      'map': function(key, value, emit) {
+        emit([value.HostID, value.AcademicYear, value.Semester]);
+      }
+    }]
+  },
+  'coursevsroom': {
+    attributes: [{
+      'name': 'schooltimeid',
+      'map': function(key, value, emit) {
+        emit([value.SchoolTimeID]);
+      }
+    }, {
+      'name': 'educationclass_room',
+      'map': function(key, value, emit) {
+        emit([value.EducationClass, value.Room]);
+      }
+    }]
+  },
+  'coursevscid': {
+    attributes: [{
+      'name': 'schooltimeid',
+      'map': function(key, value, emit) {
+        emit([value.SchoolTimeID]);
+      }
+    }, {
+      'name': 'cid',
+      'map': function(key, value, emit) {
+        emit([value.CID]);
+      }
+    }]
+  },
+  'coursevsstaff': {
+    attributes: [{
+      'name': 'schooltimeid',
+      'map': function(key, value, emit) {
+        emit([value.SchoolTimeID]);
+      }
+    }, {
+      'name': 'staffid',
+      'map': function(key, value, emit) {
+        emit([value.Staff_id]);
+      }
+    }]
+  },
+  'knowledgestructure': {
+    attributes: [{
+      'name': 'schooltimeid',
+      'map': function(key, value, emit) {
+        emit([value.schooltimeid]);
+      }
+    }]
+  },
+  'indicatordata': {
+    attributes: [{
+      'name': 'schooltimeid',
+      'map': function(key, value, emit) {
+        emit([value.SchoolTimeID]);
+      }
+    }, {
+      'name': 'cid',
+      'map': function(key, value, emit) {
+        emit([value.CID]);
+      }
+    }, {
+      'name': 'grade',
+      'map': function(key, value, emit) {
+        emit([value.Grade]);
+      }
+    }]
+  },
+  'examratio': {
+    attributes: [{
+      'name': 'schooltimeid',
+      'map': function(key, value, emit) {
+        emit([value.schooltimeid]);
+      }
+    }]
+  },
+  'subject': {
+    attributes: [{
+      'name': 'subjectid',
+      'map': function(key, value, emit) {
+        emit([value.SubjectID]);
+      }
+    }]
+  },
+  'readthinkwritedata': {
+    attributes: [{
+      'name': 'schooltimeid',
+      'map': function(key, value, emit) {
+        emit([value.SchoolTimeID]);
+      }
+    }, {
+      'name': 'cid',
+      'map': function(key, value, emit) {
+        emit([value.CID]);
+      }
+    }]
+  },
+  'desirecharacteristicdata': {
+    attributes: [{
+      'name': 'schooltimeid',
+      'map': function(key, value, emit) {
+        emit([value.SchoolTimeID]);
+      }
+    }, {
+      'name': 'cid',
+      'map': function(key, value, emit) {
+        emit([value.CID]);
+      }
+    }]
+  },
+  'courseattend': {
+    attributes: [{
+      'name': 'schooltimeid',
+      'map': function(key, value, emit) {
+        emit([value.SchoolTimeID]);
+      }
+    }]
+  },
+  'studentattend': {
+    attributes: [{
+      'name': 'schooltimeid',
+      'map': function(key, value, emit) {
+        emit([value.SchoolTimeID]);
+      }
+    }, {
+      'name': 'cid',
+      'map': function(key, value, emit) {
+        emit([value.CID]);
+      }
+    }, {
+      'name': 'id',
+      'map': function(key, value, emit) {
+        emit([value.Id]);
+      }
+    }]
+  },
+  'teacher': {
+    attributes: [{
+      'name': 'hostid_staff_id',
+      'map': function(key, value, emit) {
+        emit([value.hostid,value.staff_id]);
+      }
+    }]
+  },
+  'morning': {
+    attributes: [{
+      'name': 'id',
+      'map': function(key, value, emit) {
+        emit([value.id]);
+      }
+    }, {
+      'name': 'host_year_semester_class_room',
+      'map': function(key, value, emit) {
+        emit([value.hostid, value.year, value.semester, value.educationclassid,value.room]);
+      }
+    }]
+  },
+  'morningdetail': {
+    attributes: [{
+      'name': 'id',
+      'map': function(key, value, emit) {
+        emit([value.id]);
+      }
+    }, {
+      'name': 'cid',
+      'map': function(key, value, emit) {
+        emit([value.cid]);
+      }
+    }]
+  },
+  'weightheight': {
+    attributes: [{
+      'name': 'host_year_class_room',
+      'map': function(key, value, emit) {
+        emit([value.hostid,value.year,value.educationclassid,value.room]);
+      }
+    }]
+  },
+  'hostconfig': {
+    attributes: [{
+      'name': 'host_year_semester',
+      'map': function(key, value, emit) {
+        emit([value.HostID,value.AcademicYear,value.Semester]);
+      }
+    }]
+  },
+  'hostsystem': {
+    attributes: [{
+      'name': 'hostid',
+      'map': function(key, value, emit) {
+        emit([value.hostid]);
+      }
+    }]
+  },
+  'newindicator': {
+    attributes: [{
+      'name': 'schooltimeid',
+      'map': function(key, value, emit) {
+        emit([value.schooltimeid]);
+      }
+    }]
+  }
+};
+
+module.exports.port = '8083';
+module.exports.apikey = 'test12345';
+module.exports.db_path = './databases_index';
+module.exports.session_key = 'test123456';
+module.exports.azure_blob_accessKey = 'BrHP+BhvmKROuKhM/fjojgn6zggBZrFGEZ3+Ma1MfzFW8wp3FpLVxjXrehQFaZrIAzdGlXZJzyNaXT7aj6FKAQ==';
+module.exports.azure_blob_accountName = 'nuqlis';
