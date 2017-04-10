@@ -1,7 +1,9 @@
 var level = require('level');
 var stream = require('stream');
+var jwt = require('jsonwebtoken');
 var util = require('./util');
 var encryption = require('./encryption');
+var ssl = require('./ssl_option');
 const loginTimeOut = 180;
 
 var findByUsername = function (username, cb) {
@@ -44,6 +46,14 @@ var findByID = function (id, done) {
   });
 };
 
+var jwtToken = function(UserID) {
+  console.log(UserID);
+  // sign with RSA SHA256 
+  var cert = ssl.options.key;  // get private key 
+  var token = jwt.sign({ UserID: UserID }, cert,{ algorithm: 'RS256' });
+  return token;
+};
+
 module.exports = {
   _login: function (req, res) {
     var _username = req.body.user;
@@ -72,6 +82,10 @@ module.exports = {
                       status: false
                     });
                   } else {
+                    res.set({
+                      'Content-Type': 'application/json; charset=utf-8',
+                      'Authorization': jwtToken(_username)
+                    })
                     res.json({
                       status: true,
                       key: key
