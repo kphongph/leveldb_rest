@@ -41,7 +41,20 @@ module.exports = {
           });
         } else {
           if (db.createLogStream) {
-          db.createLogStream(req.query)
+            var opt = {
+              limit: 50
+            };
+            if (req.query.start) opt['start'] = req.query.start
+            if (req.query.end) opt['end'] = req.query.end
+            if (req.query.gt) opt['gt'] = req.query.gt
+            if (req.query.lt) opt['lt'] = req.query.lt
+            if (req.query.gte) opt['gte'] = req.query.gte
+            if (req.query.lte) opt['lte'] = req.query.lte
+            if (req.query.limit) {
+              var limit = parseInt(req.query.limit);
+              opt['limit'] = limit ? limit : 50;
+            }
+          db.createLogStream(opt)
             .pipe(JSONStream.stringify())
             .pipe(res);
           } else {

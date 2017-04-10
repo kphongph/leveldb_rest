@@ -15,7 +15,7 @@ var isIndexing = function(name) {
 }
 
 var get_dbs = function(name, options, cb) {
-  
+
   if (typeof cb === 'undefined') {
     cb = options;
     options = {
@@ -28,16 +28,15 @@ var get_dbs = function(name, options, cb) {
     if (re.test(name)) {
       options['valueEncoding'] = 'utf8';
     }
-    var db = sublevel(levelup(config.db_path + '/' + name, options));           
-    
+    var db = sublevel(levelup(config.db_path + '/' + name, options));
     if(listdb2log.isdb_log(name)){
       db = levelindex(levellog(db));
     }else{
       db = levelindex(db);
-    }    
-    
+    }
+
     dbs[name] = {'indexing':0};
-    
+
     if(config.index[name]) {
       config.index[name].attributes.forEach(function(attr) {
         dbs[name].indexing++;
@@ -46,7 +45,7 @@ var get_dbs = function(name, options, cb) {
           console.log({'database':name,'views':attr.name,'message':'indexing complete'});
         });
       });
-    }   
+    }
     dbs[name]['db'] = db;
     cb(null, db);
   } else {
