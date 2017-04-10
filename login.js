@@ -56,8 +56,8 @@ var jwtToken = function(UserID) {
 
 module.exports = {
   _login: function (req, res) {
-    var _username = req.body.user;
-    var _pass = req.body.pass;
+    var _username = req.body.user?req.body.user:req.headers.user;
+    var _pass = req.body.pass?req.body.pass:req.headers.pass;
     findByUsername(_username, function (found, user) {
       if (found) {
         var _password_hash = encryption.password_hash(_pass, user.value.doc.Pass_Salt);
