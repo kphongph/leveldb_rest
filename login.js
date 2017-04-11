@@ -83,6 +83,7 @@ module.exports = {
                     });
                   } else {
                     res.set({
+                      'Access-Control-Expose-Headers': 'Authorization',
                       'Content-Type': 'application/json; charset=utf-8',
                       'Authorization': jwtToken(_username)
                     })
