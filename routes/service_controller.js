@@ -2,6 +2,7 @@ var uuid = require('node-uuid');
 var JSONStream = require('JSONStream');
 var listdb2log = require('../listdb2log');
 var util = require('../util');
+var config = require('../config');
 
 module.exports = {
   _closedb: function(req, res){
@@ -165,20 +166,28 @@ module.exports = {
   },
   _putdata: function(req, res) {
     var db_name = req.params.db;
-    var _key = req.params.id ? req.params.id : uuid.v1();
-    var _key = _key.replace(/-/g, '');
-    var _value = req.body;
-    delete _value.apikey;
-    if (req.params.id) {
-    //  util.del(db_name, _key, function(result) {
+    var hosttest = req.body.hostid ? req.body.hostid.includes('SU') : false ;
+    if(db_name == 'obec_students' && config.cctscreen === false && !hosttest){
+      res.json({
+        'ok':false,
+        message:'ระบบได้ทำการปิดการคัดกรอง'
+      });
+    }else{
+      var _key = req.params.id ? req.params.id : uuid.v1();
+      var _key = _key.replace(/-/g, '');
+      var _value = req.body;
+      delete _value.apikey;
+      if (req.params.id) {
+      //  util.del(db_name, _key, function(result) {
+          util.put(db_name, _key, _value, function(result) {
+            res.json(result);
+          });
+      //  });
+      } else {
         util.put(db_name, _key, _value, function(result) {
           res.json(result);
         });
-    //  });
-    } else {
-      util.put(db_name, _key, _value, function(result) {
-        res.json(result);
-      });
+      }
     }
   },
   _daletedata: function(req, res) {

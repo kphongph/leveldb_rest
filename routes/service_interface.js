@@ -43,7 +43,7 @@ router.param('db', function(req, res, next, db) {
     'activity',
     'weightheight',
     'hostattendsummary',
-    'students_care', 
+    'students_care',
     'healthcare',
     'admin_area',
     'admin_school',
@@ -54,7 +54,9 @@ router.param('db', function(req, res, next, db) {
     'examratio',
     'hostconfig',
     'province',
-    'city'
+    'city',
+    'role_db',
+    'teacher_db'
   ];
   var server_proxy = 'http://localhost:44300';
   if (list_db_proxy.indexOf(req.params.db) != -1) {
