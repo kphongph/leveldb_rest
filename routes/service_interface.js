@@ -53,10 +53,18 @@ router.param('db', function(req, res, next, db) {
     'announcement',
     'examratio',
     'hostconfig',
-    'province',
-    'city',
+    'oosc_province',
+    'oosc_city',
     'role_db',
-    'teacher_db'
+    'teacher_db',
+    'form_record_new',
+    'obec_grade',
+    'oosc_tumbon',
+    'oosc_village',
+    'oosc_child',
+    'oosc_form',
+    'oosc_assignment',
+    'school_db'
   ];
   var server_proxy = 'http://localhost:44300';
   if (list_db_proxy.indexOf(req.params.db) != -1) {
