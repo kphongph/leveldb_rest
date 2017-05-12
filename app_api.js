@@ -1,13 +1,18 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var https = require('https');
-var path = require('path');
-var fs = require('fs');
 var cors = require('cors');
+var session = require('express-session');
+var request = require('request');
+var passport = require('passport');
+var authorization = require('express-authorization');
+var path = require('path');
+var JwtStrategy = require('passport-jwt').Strategy;
+var ExtractJwt = require('passport-jwt').ExtractJwt;
+var fs = require('fs');
 var multiparty = require('multiparty');
 var azure = require('azure');
 var Readable = require('stream').Readable;
-var request = require('request');
 var config = require('./config');
 var adminuser = require('./adminuser');
 var hostsummary = require('./hostsummary');
@@ -18,76 +23,25 @@ var PORT = process.env.PORT || 9001;
 var HOST = process.env.HOST || '';
 
 var app = express();
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-app.get('/img', function (req, res) {
-  res.writeHead(200, {
-    'content-type': 'text/html'
-  });
-  res.end(
-    '<form action="/upload/databasebackup?apikey=83969040dd9f11e6bc01774977b2f887" enctype="multipart/form-data" method="post">' +
-    '<input type="text" name="title"><br>' +
-    '<input type="file" name="upload"><br>' +
-    '<input type="submit" value="Upload">' +
-    '</form>'
-  );
-});
-app.get('/servertime', function (req, res) {
-  var long_date = new Date().getTime()
-  res.send(long_date.toString());
-});
+var ensureLogin_jwt = function (req, res, next) {
+  passport.authenticate('jwt', { session: false })(req,res,next);
+};
 
-app.get('/forever', forever_log);
+var jwtOptions = {}
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeader();
+jwtOptions.secretOrKey = ssl.options.cert;
 
-app.post('/user', adminuser._user);
-app.post('/resetpass', adminuser._resetpass);
-app.post('/edituser', adminuser._edituser);
-
-app.post('/changepass', adminuser._changepass);
-app.post('/studentstatus', hostsummary._studentstatus);
-app.post('/dbs/form_record/:id?', hostsummary._formrecord);
-app.post('/upload/:container/:filename?', function (req, res) {
-  var apikey = req.query.apikey;
-  var uri = 'https://maas.nuqlis.com:9000/api/dbs/user_db/' + apikey + '?apikey=' + apikey;
-  //console.log('apikey : ', apikey,'\n uri : ',uri);
-  request({
-    method: 'GET',
-    json: true,
-    uri: uri,
-  }, function (err, httpResponse, body) {
-    //console.log('\n--body--\n',body);
-    if (err) {
-      //console.log('\n--if--\n',err);
-      res.send({
-        'ok': false,
-        'message': err
-      });
-    } else {
-      //console.log('\n--else--\n',err);
-      if (body === false || body === 'Unauthorized') {
-        res.send({
-          'ok': false,
-          'message': err
-        });
-      } else {
-        //console.log('body.id : ', body.id,'\napikey : ',apikey);
-        if (body.id === apikey) {
-          _upload(req, res);
-        } else {
-          res.send({
-            'ok': false,
-            'message': err
-          });
-        }
-      }
-    }
-  });
-
-});
+passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, done) {
+  done(null, jwt_payload);
+}));
 
 var _upload = function (req, res) {
   var blobService = azure.createBlobService(config.azure_blob_accountName, config.azure_blob_accessKey);
@@ -115,7 +69,7 @@ var _upload = function (req, res) {
         'ok': true
       });
     });
-  } else { // request as form action
+  } else {
     var form = new multiparty.Form();
     form.on('part', function (part) {
       if (!part.filename) return;
@@ -133,6 +87,52 @@ var _upload = function (req, res) {
     });
   }
 };
+
+app.get('/img', function (req, res) {
+  res.writeHead(200, {
+    'content-type': 'text/html'
+  });
+  res.end(
+    '<form action="/upload/databasebackup?apikey=83969040dd9f11e6bc01774977b2f887" enctype="multipart/form-data" method="post">' +
+    '<input type="text" name="title"><br>' +
+    '<input type="file" name="upload"><br>' +
+    '<input type="submit" value="Upload">' +
+    '</form>'
+  );
+});
+app.get('/servertime', function (req, res) {
+  var long_date = new Date().getTime()
+  res.send(long_date.toString());
+});
+
+app.get('/forever', forever_log);
+
+app.post('/user', adminuser._user);
+app.post('/resetpass', adminuser._resetpass);
+app.post('/edituser', adminuser._edituser);
+
+app.post('/changepass', adminuser._changepass);
+app.post('/studentstatus', hostsummary._studentstatus);
+app.post('/dbs/form_record/:id?', hostsummary._formrecord);
+
+app.post('/upload/:container/:filename?',ensureLogin_jwt, function (req, res) {
+  _upload(req, res);
+});
+
+app.post('/blob_download',ensureLogin_jwt, function(req,res) {
+  if(req.body){
+    var blob_url = 'https://'+config.azure_blob_accountName+'.blob.core.windows.net/'+ req.body.container+'/ '+req.body.filename;
+    request({
+      method:'GET',
+      url:blob_url,
+    }).pipe(res);
+  }else{
+   res.json({
+     'ok': false,
+     'message':'blob not found'
+   });
+  }
+});
 
 https.createServer(ssl.options, app).listen(PORT, HOST, null, function () {
   console.log('Server listening on port %d', this.address().port);
