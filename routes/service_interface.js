@@ -2,7 +2,7 @@ var express = require('express');
 var request = require('request');
 var router = express.Router();
 var controller = require('./service_controller');
-var list_indexs = require('./list_indexs');
+var config = require('../config');
 var views = require('./views');
 var pipe_request = function(method, url, req, res) {
 var jwt = 'JWT eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiJCb21iIiwiaWF0IjoxNDg5MDM0MTE0fQ.fv0r1vZ9B-i_AG1ogGdvumNDpnE1eowmhETO-Lqrjpyyz884_p423mH6cn-KVaZFhy9Z9Gs-0zljg6d3KUhKhDJzomJspgHiaMzrnqVs838IviD4ig-oFcSgkqCKn6aXULXoLnpb6ueKshvdHX3NIxlNPd_oPCEDOEg8ufPAnLgb78OHcwwKK_YmB7zidrs-7Ltx93lJJSF0-FO_kd3i_H4Z3vKOtKtoAnSdWQqPr2EVilxzHQwyiKrLUnzIGz6Iv3yS2qIDp8OCXVopSRwM0bnESC0tClF-7EO6J0d1NDxamuX6XHKvuujSaoynMTFtICSY0ojUYRYDDESLvXvLzg';
@@ -98,7 +98,14 @@ router.param('db', function(req, res, next, db) {
   }
 });
 
-router.use('/index/:db', list_indexs);
+router.use('/index/:db', function (req, res) {
+ if(req.params.db){
+   var data = config.index;
+   res.send(data[req.params.db]);
+ }else{
+   res.json(config.index);
+ }
+});
 
 //GET METHOD
 router.get('/dbs', controller._listdbs);

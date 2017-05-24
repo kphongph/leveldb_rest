@@ -1,6 +1,4 @@
-var list_db_log = [
-  "form_record"
-  ];
+var list_db_log = ["authen_db"];
 
 module.exports = {
   isdb_log : function(db_name) {
