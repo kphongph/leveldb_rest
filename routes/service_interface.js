@@ -98,7 +98,7 @@ router.param('db', function(req, res, next, db) {
   }
 });
 
-router.use('/index', list_indexs);
+router.use('/index/:db', list_indexs);
 
 //GET METHOD
 router.get('/dbs', controller._listdbs);
