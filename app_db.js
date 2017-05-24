@@ -14,7 +14,6 @@ var https = require('https');
 var service_interface = require('./routes/service_interface');
 var config = require('./config');
 var login = require('./login');
-var getuser = require('./getuser');
 var ssl = require('./ssl_option');
 
 var PORT = process.env.PORT || config.port;
@@ -79,7 +78,6 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(function (id, done) {
-  //console.log(id);
   login._getUser(id, done);
 });
 
@@ -96,7 +94,6 @@ var ensureNounVerb = authorization.ensureRequest
 
 app.post('/login', login._login);
 app.post('/logout', login._logout);
-app.get('/getUser/:key?', getuser._getUser_authen);
 
 var ensureLogin = function(req,res,next) {
   passport.authenticate(['localapikey','bearer','jwt'], function(err,user,info) {

@@ -13,6 +13,7 @@ var fs = require('fs');
 var multiparty = require('multiparty');
 var azure = require('azure');
 var Readable = require('stream').Readable;
+var base64 = require('base64-stream');
 var config = require('./config');
 var adminuser = require('./adminuser');
 var hostsummary = require('./hostsummary');
@@ -100,36 +101,42 @@ app.get('/img', function (req, res) {
     '</form>'
   );
 });
+
 app.get('/servertime', function (req, res) {
   var long_date = new Date().getTime()
   res.send(long_date.toString());
 });
 
+app.get('/cctappversion', function (req, res) {
+  res.json(config.cctappversion);
+});
+
 app.get('/forever', forever_log);
 
-app.post('/user', adminuser._user);
-app.post('/resetpass', adminuser._resetpass);
-app.post('/edituser', adminuser._edituser);
+app.post('/user',ensureLogin_jwt, adminuser._user);
+app.post('/resetpass',ensureLogin_jwt, adminuser._resetpass);
+app.post('/edituser',ensureLogin_jwt, adminuser._edituser);
 
-app.post('/changepass', adminuser._changepass);
-app.post('/studentstatus', hostsummary._studentstatus);
-app.post('/dbs/form_record/:id?', hostsummary._formrecord);
+app.post('/changepass',ensureLogin_jwt, adminuser._changepass);
+app.post('/studentstatus',ensureLogin_jwt, hostsummary._studentstatus);
+app.post('/dbs/form_record/:id?',ensureLogin_jwt, hostsummary._formrecord);
 
 app.post('/upload/:container/:filename?',ensureLogin_jwt, function (req, res) {
   _upload(req, res);
 });
 
-app.post('/blob_download',ensureLogin_jwt, function(req,res) {
+app.post('/download',ensureLogin_jwt, function(req,res) {
   if(req.body){
-    var blob_url = 'https://'+config.azure_blob_accountName+'.blob.core.windows.net/'+ req.body.container+'/ '+req.body.filename;
-    request({
-      method:'GET',
-      url:blob_url,
-    }).pipe(res);
+    var blobService = azure.createBlobService(config.azure_blob_accountName, config.azure_blob_accessKey);
+    var container = req.body.container;
+    var filename = req.body.filename;
+    blobService.createReadStream(container, filename)
+    .pipe(base64.encode())
+    .pipe(res);
   }else{
    res.json({
      'ok': false,
-     'message':'blob not found'
+     'message':'can not get blob'
    });
   }
 });

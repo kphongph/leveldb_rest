@@ -64,7 +64,30 @@ router.param('db', function(req, res, next, db) {
     'oosc_child',
     'oosc_form',
     'oosc_assignment',
-    'school_db'
+    'school_db',
+    'p1_poverty_amount',
+    'p1_poverty_individual',
+    'p1_screen_summary',
+    'p1_monitor1',
+    'p1_monitor2',
+    'KpiData59_1MPerArea',
+    'KpiData59_1MPerProvince',
+    'KpiData59_1PPerArea',
+    'KpiData59_1PPerProvince',
+    'form_record',
+    'obec_students',
+    'earlywarning',
+    'edu_students',
+    'form_template',
+    'hostsummary',
+    'hostsystem',
+    'morning',
+    'morningdetail',
+    'obec_teacher',
+    'school',
+    'studentattend',
+    'form_record_homevisit',
+    'obec_students_old'
   ];
   var server_proxy = 'http://localhost:44300';
   if (list_db_proxy.indexOf(req.params.db) != -1) {
