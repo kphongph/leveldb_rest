@@ -87,7 +87,12 @@ router.param('db', function(req, res, next, db) {
     'school',
     'studentattend',
     'form_record_homevisit',
-    'obec_students_old'
+    'obec_students_old',
+    'obecStudents',
+    'studentsProfile',
+    'studentsAddress',
+    'parentsProfile',
+    'parentsAddress'
   ];
   var server_proxy = 'http://localhost:44300';
   if (list_db_proxy.indexOf(req.params.db) != -1) {
@@ -100,8 +105,11 @@ router.param('db', function(req, res, next, db) {
 
 router.use('/index/:db', function (req, res) {
  if(req.params.db){
-   var data = config.index;
-   res.send(data[req.params.db]);
+   var list = config.index;
+   var obj = {};
+   obj.name = req.params.db;
+   obj.index = list[req.params.db].attributes;
+   res.json(obj);
  }else{
    res.json(config.index);
  }
