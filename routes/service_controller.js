@@ -167,7 +167,7 @@ module.exports = {
   _putdata: function(req, res) {
     var db_name = req.params.db;
     var hosttest = req.body.hostid ? req.body.hostid.includes('SU') : false ;
-    if((db_name == 'obec_students' || db_name == 'form_record_new')  && config.cctscreen === false && !hosttest){
+    if((db_name == 'obec_students' || db_name == 'form_record_new')  && req.body.platform != 'web' && config.cctscreen === false){
       res.json({
         'ok':false,
         message:'ระบบได้ทำการปิดการคัดกรอง'

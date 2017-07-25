@@ -6,7 +6,7 @@ var config = require('../config');
 var views = require('./views');
 var pipe_request = function(method, url, req, res) {
 var jwt = 'JWT eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOiJCb21iIiwiaWF0IjoxNDg5MDM0MTE0fQ.fv0r1vZ9B-i_AG1ogGdvumNDpnE1eowmhETO-Lqrjpyyz884_p423mH6cn-KVaZFhy9Z9Gs-0zljg6d3KUhKhDJzomJspgHiaMzrnqVs838IviD4ig-oFcSgkqCKn6aXULXoLnpb6ueKshvdHX3NIxlNPd_oPCEDOEg8ufPAnLgb78OHcwwKK_YmB7zidrs-7Ltx93lJJSF0-FO_kd3i_H4Z3vKOtKtoAnSdWQqPr2EVilxzHQwyiKrLUnzIGz6Iv3yS2qIDp8OCXVopSRwM0bnESC0tClF-7EO6J0d1NDxamuX6XHKvuujSaoynMTFtICSY0ojUYRYDDESLvXvLzg';
-  //var jwt = req.headers.authorization;
+//var jwt = req.headers.authorization;
   if (req.body) {
     request({
         method: method,
@@ -65,11 +65,6 @@ router.param('db', function(req, res, next, db) {
     'oosc_form',
     'oosc_assignment',
     'school_db',
-    'p1_poverty_amount',
-    'p1_poverty_individual',
-    'p1_screen_summary',
-    'p1_monitor1',
-    'p1_monitor2',
     'KpiData59_1MPerArea',
     'KpiData59_1MPerProvince',
     'KpiData59_1PPerArea',
@@ -92,10 +87,34 @@ router.param('db', function(req, res, next, db) {
     'studentsProfile',
     'studentsAddress',
     'parentsProfile',
-    'parentsAddress'
+    'parentsAddress',
+    'hostsummarydetail',
+    'hostclassroom',
+    'dmc_yakjon601',
+    'classteacher',
+    'pp5summary',
+    'pp5summarynotification'
   ];
+
+  var oosc_db_list = [
+    'oosc_assignment',
+    'oosc_child',
+    'oosc_city',
+    'oosc_form',
+    'oosc_province',
+    'oosc_tumbon',
+    'oosc_village'
+  ];
+
   var server_proxy = 'http://localhost:44300';
-  if (list_db_proxy.indexOf(req.params.db) != -1) {
+  if(list_db_proxy.indexOf(req.params.db) != -1) {
+    if(oosc_db_list.indexOf(req.params.db) != -1) {
+      server_proxy = 'http://thaioosc.org:44300';
+    }/*else{
+      if(req.params.db == 'obec_students'){
+        server_proxy = 'http://thaieduforall.org:44300';
+      }
+    }*/
     var db_url = server_proxy + req.url;
     pipe_request(req.method, db_url, req, res);
   } else {

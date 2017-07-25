@@ -67,7 +67,7 @@ passport.use(new BearerStrategy(
 
 var jwtOptions = {}
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeader();
-jwtOptions.secretOrKey = ssl.options.cert;
+jwtOptions.secretOrKey = ssl.jwt.cert;
 
 passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, done) {
   done(null, jwt_payload);

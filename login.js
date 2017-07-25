@@ -48,8 +48,8 @@ var findByID = function (id, done) {
 
 var jwtToken = function(UserID) {
   console.log(UserID);
-  // sign with RSA SHA256 
-  var cert = ssl.options.key;  // get private key 
+  // sign with RSA SHA256
+  var cert = ssl.jwt.key;  // get private key
   var token = jwt.sign({ UserID: UserID }, cert,{ algorithm: 'RS256' });
   return token;
 };
