@@ -6,7 +6,8 @@ var encryption = require('./encryption');
 var ssl = require('./ssl_option');
 const loginTimeOut = 180;
 
-var findByUsername = function (username, cb) {
+var findByUsername = function(username, cb) {
+
   util.get_dbs('user_db', function (err, db) {
     var found = false;
     var _index = db.indexes['user'];
