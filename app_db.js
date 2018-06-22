@@ -40,7 +40,7 @@ passport.use(new LocalStrategy(function (apikey, done) {
 
 var pConf =  {
     protocol: "https",
-    host: "maas.nuqlis.com:9002",
+    host: "thaieduforall.org:9002",
   };
 
 passport.use(new BearerStrategy(

@@ -121,9 +121,9 @@ app.post('/changepass',ensureLogin_jwt, adminuser._changepass);
 app.post('/studentstatus',ensureLogin_jwt, hostsummary._studentstatus);
 app.post('/dbs/form_record/:id?',ensureLogin_jwt, hostsummary._formrecord);
 
-app.post('/upload/:container/:filename?',ensureLogin_jwt, function (req, res) {
+/*app.post('/upload/:container/:filename?',ensureLogin_jwt, function (req, res) {
   _upload(req, res);
-});
+});*/
 
 app.post('/download',ensureLogin_jwt, function(req,res) {
   if(req.body){

@@ -9,12 +9,12 @@ module.exports.options = {
   /*---ssl certificate---*/
   key: fs.readFileSync(path.join(certsPath, 'server.key')),
   cert: [
-    //fs.readFileSync(path.join(certsPath, 'server-thaiedu.crt')),
-    fs.readFileSync(path.join(certsPath, 'server-maas.crt'))
+    fs.readFileSync(path.join(certsPath, 'server-thaieduforall_20180203.crt')),
+    //fs.readFileSync(path.join(certsPath, 'server-maas.crt'))
   ],
   ca: [
-    //fs.readFileSync(path.join(caCertsPath, 'ca-thaiedu.crt')),
-    fs.readFileSync(path.join(caCertsPath, 'ca-maas.crt'))
+    fs.readFileSync(path.join(caCertsPath, 'ca-thaieduforall_20180203.crt')),
+    //fs.readFileSync(path.join(caCertsPath, 'ca-maas.crt'))
   ],
   requestCert: false,
   rejectUnauthorized: true

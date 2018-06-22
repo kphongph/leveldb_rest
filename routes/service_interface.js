@@ -76,8 +76,8 @@ router.param('db', function(req, res, next, db) {
     'form_template',
     'hostsummary',
     'hostsystem',
-    'morning',
-    'morningdetail',
+//    'morning',
+//    'morningdetail',
     'obec_teacher',
     'school',
     'studentattend',
@@ -103,9 +103,12 @@ router.param('db', function(req, res, next, db) {
     'cct_record_db',
     'homevisit_record',
     'subject_attendance',
+    'publicholiday',
     '_oosc_report',
     '_attendance_count',
-    '_attendance_all'
+    '_attendance_all',
+    'school_report_summary',
+    'weightheight2018'
   ];
 
   var oosc_db_list = [
@@ -123,7 +126,7 @@ router.param('db', function(req, res, next, db) {
   var server_proxy = 'http://localhost:44300';
   if(list_db_proxy.indexOf(req.params.db) != -1) {
     if(oosc_db_list.indexOf(req.params.db) != -1) {
-      server_proxy = 'http://thaioosc.org:44300';
+      server_proxy = 'https://thaioosc.org:8000/api';
     }/*else{
       if(req.params.db == 'obec_students'){
         server_proxy = 'http://thaieduforall.org:44300';
