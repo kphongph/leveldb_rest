@@ -1,10 +1,13 @@
 var level = require('level');
 var stream = require('stream');
+var jwt = require('jsonwebtoken');
 var util = require('./util');
 var encryption = require('./encryption');
+var ssl = require('./ssl_option');
 const loginTimeOut = 180;
 
-var findByUsername = function (username, cb) {
+var findByUsername = function(username, cb) {
+
   util.get_dbs('user_db', function (err, db) {
     var found = false;
     var _index = db.indexes['user'];
@@ -44,10 +47,18 @@ var findByID = function (id, done) {
   });
 };
 
+var jwtToken = function(UserID) {
+  console.log(UserID);
+  // sign with RSA SHA256
+  var cert = ssl.jwt.key;  // get private key
+  var token = jwt.sign({ UserID: UserID }, cert,{ algorithm: 'RS256' });
+  return token;
+};
+
 module.exports = {
   _login: function (req, res) {
-    var _username = req.body.user;
-    var _pass = req.body.pass;
+    var _username = req.body.user?req.body.user:req.headers.user;
+    var _pass = req.body.pass?req.body.pass:req.headers.pass;
     findByUsername(_username, function (found, user) {
       if (found) {
         var _password_hash = encryption.password_hash(_pass, user.value.doc.Pass_Salt);
@@ -72,6 +83,11 @@ module.exports = {
                       status: false
                     });
                   } else {
+                    res.set({
+                      'Access-Control-Expose-Headers': 'Authorization',
+                      'Content-Type': 'application/json; charset=utf-8',
+                      'Authorization': jwtToken(_username)
+                    })
                     res.json({
                       status: true,
                       key: key
