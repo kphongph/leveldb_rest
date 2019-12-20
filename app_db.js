@@ -10,6 +10,8 @@ var session = require('express-session');
 var authorization = require('express-authorization');
 var path = require('path');
 var https = require('https');
+var helmet = require('helmet')
+var session = require('express-session')
 
 var service_interface = require('./routes/service_interface');
 var config = require('./config');
@@ -20,6 +22,23 @@ var PORT = process.env.PORT || config.port;
 var HOST = process.env.HOST || '';
 
 var app = express();
+
+app.set('trust proxy', 1) // trust first proxy
+app.use(session({
+  secret: 's3Cur3',
+  name: 'sessionId',
+  cookie: {
+    secure: true
+  }
+}))
+
+app.use(helmet())
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    formAction:["'self'"]
+  }
+}))
+
 
 app.use(session({
   secret: config.session_key

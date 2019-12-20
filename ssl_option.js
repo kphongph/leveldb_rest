@@ -1,12 +1,15 @@
 var path = require('path');
 var fs = require('fs');
 
+const { constants } = require('crypto')
+
 var certsPath = path.join(__dirname, 'ssl_certificate', 'server');
 var caCertsPath = path.join(__dirname, 'ssl_certificate', 'ca');
 var certsJWT = path.join(__dirname, 'ssl_certificate', 'jwt');
 
 module.exports.options = {
   /*---ssl certificate---*/
+  secureOptions: constants.SSL_OP_NO_TLSv1,
   key: fs.readFileSync(path.join(certsPath, 'server.key')),
   cert: [
     fs.readFileSync(path.join(certsPath, 'server-letencrypt.crt')),
